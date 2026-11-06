@@ -44,12 +44,12 @@
       <!-- Desktop Navigation Links -->
       <nav class="desktop-nav" aria-label="Main Navigation">
         <ul class="nav-links">
-          <li><a href="#hero" class="nav-link active">Home</a></li>
-          <li><a href="#camera-demo" class="nav-link">AI Camera & Detection</a></li>
-          <li><a href="#features" class="nav-link">Features</a></li>
-          <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
-          <li><a href="#innovation" class="nav-link">Innovation</a></li>
-          <li><a href="#about" class="nav-link">About Us</a></li>
+          <li><a href="#hero" class="nav-link active" data-i18n="nav_home">Home</a></li>
+          <li><a href="#camera-demo" class="nav-link" data-i18n="nav_camera_detection">AI Camera & Detection</a></li>
+          <li><a href="#features" class="nav-link" data-i18n="nav_features">Features</a></li>
+          <li><a href="#how-it-works" class="nav-link" data-i18n="nav_how_it_works">How It Works</a></li>
+          <li><a href="#innovation" class="nav-link" data-i18n="nav_innovation">Innovation</a></li>
+          <li><a href="#about" class="nav-link" data-i18n="nav_about">About Us</a></li>
         </ul>
       </nav>
 
@@ -68,17 +68,17 @@
         <!-- Unauthenticated Buttons -->
         <div id="nav-auth-logged-out" class="auth-buttons">
           <button class="btn btn-outline" onclick="openAuthModal('login')">
-            <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> <span data-i18n="nav_login">Login</span>
           </button>
           <button class="btn btn-primary" onclick="openAuthModal('register')">
-            <i class="fa-solid fa-user-plus"></i> Get Started
+            <i class="fa-solid fa-user-plus"></i> <span data-i18n="nav_get_started">Get Started</span>
           </button>
         </div>
 
         <!-- Authenticated Buttons -->
         <div id="nav-auth-logged-in" class="auth-buttons" style="display: none;">
           <button class="btn btn-primary" onclick="switchView('dashboard')">
-            <i class="fa-solid fa-gauge-high"></i> Dashboard
+            <i class="fa-solid fa-gauge-high"></i> <span data-i18n="nav_dash">Dashboard</span>
           </button>
           <div class="user-pill-dropdown">
             <span id="nav-farmer-name" class="farmer-pill">Farmer Ramesh</span>
@@ -98,16 +98,16 @@
     <!-- Mobile Drawer Menu -->
     <div id="mobile-drawer" class="mobile-drawer">
       <ul class="mobile-nav-links">
-        <li><a href="#hero" onclick="toggleMobileMenu()">Home</a></li>
-        <li><a href="#camera-demo" onclick="toggleMobileMenu()">AI Camera & Detection</a></li>
-        <li><a href="#features" onclick="toggleMobileMenu()">Features</a></li>
-        <li><a href="#how-it-works" onclick="toggleMobileMenu()">How It Works</a></li>
-        <li><a href="#innovation" onclick="toggleMobileMenu()">Innovation (Village Warnings)</a></li>
-        <li><a href="#about" onclick="toggleMobileMenu()">About VETAI</a></li>
+        <li><a href="#hero" onclick="toggleMobileMenu()" data-i18n="nav_home">Home</a></li>
+        <li><a href="#camera-demo" onclick="toggleMobileMenu()" data-i18n="nav_camera_detection">AI Camera & Detection</a></li>
+        <li><a href="#features" onclick="toggleMobileMenu()" data-i18n="nav_features">Features</a></li>
+        <li><a href="#how-it-works" onclick="toggleMobileMenu()" data-i18n="nav_how_it_works">How It Works</a></li>
+        <li><a href="#innovation" onclick="toggleMobileMenu()" data-i18n="nav_innovation">Innovation (Village Warnings)</a></li>
+        <li><a href="#about" onclick="toggleMobileMenu()" data-i18n="nav_about">About VETAI</a></li>
       </ul>
       <div class="mobile-actions">
-        <button class="btn btn-outline w-100 mb-2" onclick="openAuthModal('login'); toggleMobileMenu();">Login</button>
-        <button class="btn btn-primary w-100" onclick="openAuthModal('register'); toggleMobileMenu();">Get Started</button>
+        <button class="btn btn-outline w-100 mb-2" onclick="openAuthModal('login'); toggleMobileMenu();" data-i18n="nav_login">Login</button>
+        <button class="btn btn-primary w-100" onclick="openAuthModal('register'); toggleMobileMenu();" data-i18n="nav_get_started">Get Started</button>
       </div>
     </div>
   </header>
@@ -123,40 +123,40 @@
         <div class="hero-content">
           <div class="hero-badge">
             <span class="pulse-dot"></span>
-            Non-Invasive AI Camera Vision • No Physical Collars Required
+            <span data-i18n="hero_badge">Non-Invasive AI Camera Vision • No Physical Collars Required</span>
           </div>
-          <h1 class="hero-title">
+          <h1 class="hero-title" data-i18n="hero_title">
             Automated Livestock Healthcare <br>
             <span class="text-accent">Powered by AI Vision.</span>
           </h1>
-          <p class="hero-subtitle">
+          <p class="hero-subtitle" data-i18n="hero_sub">
             AI camera systems for dairy and beef cattle use computer vision, machine learning, and thermal or RGB imaging to monitor health and welfare parameters automatically without physical collars or transponders.
           </p>
 
           <div class="hero-cta-group">
             <a href="#camera-demo" class="btn btn-primary btn-lg">
-              <i class="fa-solid fa-camera"></i> Launch Live Camera & Upload
+              <i class="fa-solid fa-camera"></i> <span data-i18n="hero_btn_camera">Launch Live Camera & Upload</span>
             </a>
             <button class="btn btn-secondary btn-lg" onclick="demoLoginAndLaunch('assessment')">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Open Full Dashboard
+              <i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="hero_btn_dash">Open Full Dashboard</span>
             </button>
           </div>
 
           <!-- Hero Trust Metrics -->
           <div class="hero-stats">
             <div class="stat-item">
-              <span class="stat-number">Collar-Free</span>
-              <span class="stat-label">Vision Monitoring</span>
+              <span class="stat-number" data-i18n="hero_stat1_num">Collar-Free</span>
+              <span class="stat-label" data-i18n="hero_stat1_lbl">Vision Monitoring</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
-              <span class="stat-number">Thermal + RGB</span>
-              <span class="stat-label">Dual Spectrum</span>
+              <span class="stat-number" data-i18n="hero_stat2_num">Thermal + RGB</span>
+              <span class="stat-label" data-i18n="hero_stat2_lbl">Dual Spectrum</span>
             </div>
             <div class="stat-divider"></div>
             <div class="stat-item">
-              <span class="stat-number">3 Languages</span>
-              <span class="stat-label">ಕನ್ನಡ • हिंदी • English</span>
+              <span class="stat-number" data-i18n="hero_stat3_num">3 Languages</span>
+              <span class="stat-label" data-i18n="hero_stat3_lbl">ಕನ್ನಡ • हिंदी • English</span>
             </div>
           </div>
         </div>
@@ -190,9 +190,9 @@
     <section id="camera-demo" class="section bg-alt">
       <div class="section-container">
         <div class="section-header text-center">
-          <span class="section-tag">Interactive Non-Invasive Vision</span>
-          <h2 class="section-title">AI Camera Livestock Disease & Welfare System</h2>
-          <p class="section-subtitle">
+          <span class="section-tag" data-i18n="camera_tag">Interactive Non-Invasive Vision</span>
+          <h2 class="section-title" data-i18n="camera_title">AI Camera Livestock Disease & Welfare System</h2>
+          <p class="section-subtitle" data-i18n="camera_sub">
             AI camera systems for dairy and beef cattle use computer vision, machine learning, and thermal or RGB imaging to monitor health and welfare parameters automatically without physical collars or transponders.
           </p>
         </div>
@@ -205,7 +205,7 @@
               <!-- 1. Select Animal -->
               <div class="form-group mb-3">
                 <label class="form-label" for="landing-animal-select">
-                  <strong>1. Select Registered Animal <span class="text-danger">*</span></strong>
+                  <strong data-i18n="form_step1">1. Select Registered Animal *</strong>
                 </label>
                 <select id="landing-animal-select" class="form-control" required>
                   <option value="1">Gauri (Gir Indigenous Cow - IN-KA-DH-0101)</option>
@@ -218,23 +218,23 @@
               <div class="form-group mb-3">
                 <div class="flex-between mb-2">
                   <label class="form-label mb-0">
-                    <strong>2. Animal Photograph & Live Camera (Collar-Free AI Vision)</strong>
+                    <strong data-i18n="form_step2">2. Animal Photograph & Live Camera (Collar-Free AI Vision)</strong>
                   </label>
                   
                   <!-- Switch: Upload Photo vs Live Camera -->
                   <div class="btn-group-toggle">
                     <button type="button" id="btn-landing-mode-upload" class="btn btn-sm btn-primary" onclick="setLandingCaptureMode('upload')">
-                      <i class="fa-solid fa-cloud-arrow-up"></i> Upload Photo
+                      <i class="fa-solid fa-cloud-arrow-up"></i> <span data-i18n="btn_mode_upload">Upload Photo</span>
                     </button>
                     <button type="button" id="btn-landing-mode-camera" class="btn btn-sm btn-outline" onclick="setLandingCaptureMode('camera')">
-                      <i class="fa-solid fa-video"></i> Live Camera
+                      <i class="fa-solid fa-video"></i> <span data-i18n="btn_mode_camera">Live Camera</span>
                     </button>
                   </div>
                 </div>
 
                 <!-- Spectrum Toggle: RGB vs Thermal -->
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                  <small class="text-muted">OpenCV Sharpness & Thermography Active</small>
+                  <small class="text-muted" data-i18n="spectrum_hint">OpenCV Sharpness & Thermography Active</small>
                   <div class="btn-group-toggle">
                     <button type="button" id="btn-landing-spectrum-rgb" class="btn btn-sm btn-secondary active" onclick="setLandingSpectrum('RGB')">
                       🟢 RGB Spectrum
@@ -251,7 +251,7 @@
                     <input type="file" id="landing-photo-input" accept="image/*" class="file-input-hidden" onchange="previewLandingPhoto(event)">
                     <div id="landing-dropzone-content">
                       <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
-                      <p class="dropzone-prompt"><strong>Click or drag photograph here</strong></p>
+                      <p class="dropzone-prompt"><strong data-i18n="dropzone_prompt">Click or drag photograph here</strong></p>
                       <small class="text-muted">Supports JPG, PNG in daylight</small>
                     </div>
 
@@ -307,26 +307,26 @@
               <!-- 3. Observable Symptoms -->
               <div class="form-group mb-3">
                 <label class="form-label">
-                  <strong>3. Observable Symptoms * <small class="text-muted">(Select all that apply)</small></strong>
+                  <strong data-i18n="form_step3">3. Observable Symptoms * (Select all that apply)</strong>
                 </label>
 
                 <div class="symptoms-checkbox-grid">
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Fever"> <span><i class="fa-solid fa-temperature-high"></i> Fever</span></label>
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Loss of appetite"> <span><i class="fa-solid fa-bowl-food"></i> Loss of Appetite</span></label>
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Weakness"> <span><i class="fa-solid fa-battery-quarter"></i> Weakness</span></label>
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Reduced milk production"> <span><i class="fa-solid fa-droplet"></i> Reduced Milk</span></label>
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Diarrhoea"> <span><i class="fa-solid fa-water"></i> Diarrhoea</span></label>
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Coughing"> <span><i class="fa-solid fa-head-side-cough"></i> Coughing</span></label>
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Abnormal breathing"> <span><i class="fa-solid fa-lungs"></i> Abnormal Breathing</span></label>
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Reduced activity"> <span><i class="fa-solid fa-bed"></i> Reduced Activity</span></label>
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Unusual movement"> <span><i class="fa-solid fa-person-walking-with-cane"></i> Limping / Gait Arch</span></label>
-                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Cutaneous Nodules"> <span><i class="fa-solid fa-circle-dot"></i> Skin Nodules / Lumps</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Fever"> <span data-i18n="sym_fever"><i class="fa-solid fa-temperature-high"></i> Fever</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Loss of appetite"> <span data-i18n="sym_appetite"><i class="fa-solid fa-bowl-food"></i> Loss of Appetite</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Weakness"> <span data-i18n="sym_weakness"><i class="fa-solid fa-battery-quarter"></i> Weakness</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Reduced milk production"> <span data-i18n="sym_milk"><i class="fa-solid fa-droplet"></i> Reduced Milk</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Diarrhoea"> <span data-i18n="sym_diarrhoea"><i class="fa-solid fa-water"></i> Diarrhoea</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Coughing"> <span data-i18n="sym_cough"><i class="fa-solid fa-head-side-cough"></i> Coughing</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Abnormal breathing"> <span data-i18n="sym_breathing"><i class="fa-solid fa-lungs"></i> Abnormal Breathing</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Reduced activity"> <span data-i18n="sym_activity"><i class="fa-solid fa-bed"></i> Reduced Activity</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Unusual movement"> <span data-i18n="sym_limping"><i class="fa-solid fa-person-walking-with-cane"></i> Limping / Gait Arch</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Cutaneous Nodules"> <span data-i18n="sym_nodules"><i class="fa-solid fa-circle-dot"></i> Skin Nodules / Lumps</span></label>
                 </div>
               </div>
 
               <div class="form-row mb-3">
                 <div class="col-6">
-                  <label class="form-label" for="landing-duration"><strong>Duration</strong></label>
+                  <label class="form-label" for="landing-duration"><strong data-i18n="form_duration_label">Duration</strong></label>
                   <select id="landing-duration" class="form-control">
                     <option value="Less than 24 hours">Less than 24 hours</option>
                     <option value="1 Day" selected>1 Day</option>
@@ -336,7 +336,7 @@
                 </div>
 
                 <div class="col-6">
-                  <label class="form-label" for="landing-severity"><strong>Severity</strong></label>
+                  <label class="form-label" for="landing-severity"><strong data-i18n="form_severity_label">Severity</strong></label>
                   <select id="landing-severity" class="form-control">
                     <option value="Mild">Mild</option>
                     <option value="Moderate" selected>Moderate</option>
@@ -346,7 +346,7 @@
               </div>
 
               <button type="submit" id="landing-submit-btn" class="btn btn-primary btn-lg w-100">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Run AI Disease & Welfare Detection
+                <i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="btn_run_detection">Run AI Disease & Welfare Detection</span>
               </button>
             </form>
           </div>
@@ -739,41 +739,59 @@
       </div>
 
       <nav class="sidebar-nav">
-        <div class="nav-group-title">MAIN NAVIGATION</div>
+        <div class="nav-group-title" id="sidebar-nav-title">MAIN NAVIGATION</div>
         <ul class="sidebar-menu">
-          <li>
-            <button class="nav-item active" onclick="switchDashboardTab('overview')">
-              <i class="fa-solid fa-chart-pie"></i> <span>Dashboard Overview</span>
+          <!-- Farmer-Only Menu Items -->
+          <li class="nav-item-farmer">
+            <button class="nav-item active" id="nav-btn-overview" onclick="switchDashboardTab('overview')">
+              <i class="fa-solid fa-chart-pie"></i> <span data-i18n="nav_overview">Dashboard Overview</span>
             </button>
           </li>
-          <li>
-            <button class="nav-item inno-highlight" onclick="switchDashboardTab('assessment')">
-              <i class="fa-solid fa-camera-viewfinder"></i> <span>AI Camera & Symptoms</span>
+          <li class="nav-item-farmer">
+            <button class="nav-item inno-highlight" id="nav-btn-assessment" onclick="switchDashboardTab('assessment')">
+              <i class="fa-solid fa-camera-viewfinder"></i> <span data-i18n="nav_camera">AI Camera & Symptoms</span>
             </button>
           </li>
-          <li>
-            <button class="nav-item" onclick="switchDashboardTab('animals')">
-              <i class="fa-solid fa-cow"></i> <span>My Animals</span>
+          <li class="nav-item-farmer">
+            <button class="nav-item" id="nav-btn-animals" onclick="switchDashboardTab('animals')">
+              <i class="fa-solid fa-cow"></i> <span data-i18n="nav_animals">My Animals</span>
             </button>
           </li>
-          <li>
-            <button class="nav-item" onclick="switchDashboardTab('reminders')">
-              <i class="fa-solid fa-syringe"></i> <span>Vaccine & Reminders</span>
+          <li class="nav-item-farmer">
+            <button class="nav-item" id="nav-btn-reminders" onclick="switchDashboardTab('reminders')">
+              <i class="fa-solid fa-syringe"></i> <span data-i18n="nav_reminders">Vaccine & Reminders</span>
             </button>
           </li>
-          <li>
-            <button class="nav-item" onclick="switchDashboardTab('veterinary')">
-              <i class="fa-solid fa-user-doctor"></i> <span>Veterinary Assistance</span>
+          <li class="nav-item-farmer">
+            <button class="nav-item" id="nav-btn-veterinary" onclick="switchDashboardTab('veterinary')">
+              <i class="fa-solid fa-user-doctor"></i> <span data-i18n="nav_veterinary">Veterinary Assistance</span>
             </button>
           </li>
-          <li>
-            <button class="nav-item inno-highlight" onclick="switchDashboardTab('community')">
-              <i class="fa-solid fa-shield-virus"></i> <span>Village Early Warning</span>
+
+          <!-- Doctor-Only Menu Items -->
+          <li class="nav-item-doctor" style="display: none;">
+            <button class="nav-item" id="nav-btn-doc-consultations" onclick="switchDashboardTab('doctor-consultations')">
+              <i class="fa-solid fa-truck-medical"></i> <span>ರೋಗಿಗಳ ವಿನಂತಿಗಳು (Farmer Requests)</span>
+              <span id="sidebar-danger-badge" class="badge-danger-pill ml-auto" style="display: none;">🚨 DANGER</span>
             </button>
           </li>
+          <li class="nav-item-doctor" style="display: none;">
+            <button class="nav-item" id="nav-btn-doc-ehr" onclick="switchDashboardTab('doctor-ehr')">
+              <i class="fa-solid fa-file-medical"></i> <span>ಹಸುಗಳ ವೈದ್ಯಕೀಯ ವರದಿ (Cow EHR)</span>
+            </button>
+          </li>
+
+          <!-- Doctor Early Warning (Designated for Doctor) -->
+          <li class="nav-item-doctor" style="display: none;">
+            <button class="nav-item inno-highlight" id="nav-btn-community-doc" onclick="switchDashboardTab('community')">
+              <i class="fa-solid fa-shield-virus"></i> <span>ಗ್ರಾಮ ರೋಗ ಮುನ್ನೆಚ್ಚರಿಕೆ (Village Warnings)</span>
+            </button>
+          </li>
+
+          <!-- Shared Menu Items -->
           <li>
-            <button class="nav-item" onclick="switchDashboardTab('assistant')">
-              <i class="fa-solid fa-headset"></i> <span>Multilingual Assistant</span>
+            <button class="nav-item" id="nav-btn-assistant" onclick="switchDashboardTab('assistant')">
+              <i class="fa-solid fa-headset"></i> <span data-i18n="nav_assistant">Multilingual Assistant</span>
             </button>
           </li>
         </ul>
@@ -788,7 +806,7 @@
           </div>
         </div>
         <button class="btn btn-ghost btn-sm w-100 text-danger" onclick="logoutFarmer()">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout
+          <i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout_btn">Logout</span>
         </button>
       </div>
     </aside>
@@ -807,21 +825,48 @@
         </div>
 
         <div class="dash-topbar-right">
+          <!-- Doctor Real-Time Emergency Notification Bell -->
+          <div id="doctor-notif-bell-wrap" class="notif-bell-wrap" style="display: none;">
+            <button type="button" class="notif-bell-btn" onclick="toggleDoctorNotifDropdown()" title="Doctor Emergency Notifications">
+              <i class="fa-solid fa-bell"></i>
+              <span id="doctor-notif-badge" class="notif-badge" style="display: none;">0</span>
+            </button>
+            <div id="doctor-notif-dropdown" class="notif-dropdown-card" style="display: none;">
+              <div class="notif-header">
+                <strong>🚨 ತುರ್ತು ಅಧಿಸೂಚನೆಗಳು (Emergency Alerts)</strong>
+                <button type="button" class="btn btn-xs btn-ghost" onclick="markAllDoctorNotificationsRead()">Mark Read</button>
+              </div>
+              <div id="doctor-notif-list" class="notif-list-items">
+                <div class="p-3 text-muted text-center text-sm">ಯಾವುದೇ ಹೊಸ ತುರ್ತು ಅಧಿಸೂಚನೆಗಳಿಲ್ಲ</div>
+              </div>
+            </div>
+          </div>
+
           <div id="dash-cluster-alert-indicator" class="alert-indicator-pill" onclick="switchDashboardTab('community')" title="Click to view village warnings">
             <span class="pulse-dot"></span>
             <span id="cluster-pill-text">1 Village Warning Active</span>
           </div>
 
-          <button class="btn btn-primary btn-sm" onclick="switchDashboardTab('assessment')">
-            <i class="fa-solid fa-camera"></i> Live AI Scan
+          <!-- Farmer Topbar Action Buttons -->
+          <button id="topbar-btn-scan" class="btn btn-primary btn-sm" onclick="switchDashboardTab('assessment')">
+            <i class="fa-solid fa-camera"></i> <span data-i18n="topbar_scan">Live AI Scan</span>
           </button>
 
-          <button class="btn btn-outline btn-sm" onclick="openAddAnimalModal()">
-            <i class="fa-solid fa-plus"></i> Register Animal
+          <button id="topbar-btn-reg" class="btn btn-outline btn-sm" onclick="openAddAnimalModal()">
+            <i class="fa-solid fa-plus"></i> <span data-i18n="topbar_reg">Register Animal</span>
+          </button>
+
+          <!-- Doctor Topbar Action Buttons -->
+          <button id="topbar-btn-doc-req" class="btn btn-danger btn-sm" style="display: none;" onclick="switchDashboardTab('doctor-consultations')">
+            <i class="fa-solid fa-truck-medical"></i> <span>Farmer Requests</span>
+          </button>
+
+          <button id="topbar-btn-doc-ehr" class="btn btn-primary btn-sm" style="display: none;" onclick="openCowReportModal()">
+            <i class="fa-solid fa-file-circle-plus"></i> <span>+ New Cow EHR</span>
           </button>
 
           <button class="btn btn-outline btn-sm" onclick="switchView('landing')">
-            <i class="fa-solid fa-globe"></i> Website
+            <i class="fa-solid fa-globe"></i> <span data-i18n="topbar_web">Website</span>
           </button>
         </div>
       </header>
@@ -1013,7 +1058,7 @@
                 <!-- 1. Select Registered Animal -->
                 <div class="form-group mb-3">
                   <label class="form-label" for="assess-animal-select">
-                    <strong>1. Select Registered Animal <span class="text-danger">*</span></strong>
+                    <strong data-i18n="form_step1">1. Select Registered Animal *</strong>
                   </label>
                   <select id="assess-animal-select" class="form-control" required>
                     <option value="">-- Choose an animal --</option>
@@ -1024,16 +1069,16 @@
                 <div class="form-group mb-3">
                   <div class="flex-between mb-2">
                     <label class="form-label mb-0">
-                      <strong>2. Animal Photograph & Live Camera (Collar-Free AI Vision)</strong>
+                      <strong data-i18n="form_step2">2. Animal Photograph & Live Camera (Collar-Free AI Vision)</strong>
                     </label>
 
                     <!-- Toggle: Upload Photo vs Live Camera -->
                     <div class="btn-group-toggle">
                       <button type="button" id="btn-dash-mode-upload" class="btn btn-sm btn-primary" onclick="setDashCaptureMode('upload')">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Photo
+                        <i class="fa-solid fa-cloud-arrow-up"></i> <span data-i18n="btn_mode_upload">Upload Photo</span>
                       </button>
                       <button type="button" id="btn-dash-mode-camera" class="btn btn-sm btn-outline" onclick="setDashCaptureMode('camera')">
-                        <i class="fa-solid fa-video"></i> Live Camera
+                        <i class="fa-solid fa-video"></i> <span data-i18n="btn_mode_camera">Live Camera</span>
                       </button>
                     </div>
                   </div>
@@ -1113,26 +1158,26 @@
                 <!-- 3. Observable Symptoms -->
                 <div class="form-group mb-3">
                   <label class="form-label">
-                    <strong>3. Observable Symptoms * <small class="text-muted">(Select all that apply)</small></strong>
+                    <strong data-i18n="form_step3">3. Observable Symptoms * (Select all that apply)</strong>
                   </label>
 
                   <div class="symptoms-checkbox-grid">
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Fever"> <span><i class="fa-solid fa-temperature-high"></i> Fever</span></label>
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Loss of appetite"> <span><i class="fa-solid fa-bowl-food"></i> Loss of Appetite</span></label>
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Weakness"> <span><i class="fa-solid fa-battery-quarter"></i> Weakness</span></label>
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Reduced milk production"> <span><i class="fa-solid fa-droplet"></i> Reduced Milk</span></label>
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Diarrhoea"> <span><i class="fa-solid fa-water"></i> Diarrhoea</span></label>
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Coughing"> <span><i class="fa-solid fa-head-side-cough"></i> Coughing</span></label>
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Abnormal breathing"> <span><i class="fa-solid fa-lungs"></i> Abnormal Breathing</span></label>
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Reduced activity"> <span><i class="fa-solid fa-bed"></i> Reduced Activity</span></label>
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Unusual movement"> <span><i class="fa-solid fa-person-walking-with-cane"></i> Limping / Gait Arch</span></label>
-                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Cutaneous Nodules"> <span><i class="fa-solid fa-circle-dot"></i> Skin Nodules / Lumps</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Fever"> <span data-i18n="sym_fever"><i class="fa-solid fa-temperature-high"></i> Fever</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Loss of appetite"> <span data-i18n="sym_appetite"><i class="fa-solid fa-bowl-food"></i> Loss of Appetite</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Weakness"> <span data-i18n="sym_weakness"><i class="fa-solid fa-battery-quarter"></i> Weakness</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Reduced milk production"> <span data-i18n="sym_milk"><i class="fa-solid fa-droplet"></i> Reduced Milk</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Diarrhoea"> <span data-i18n="sym_diarrhoea"><i class="fa-solid fa-water"></i> Diarrhoea</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Coughing"> <span data-i18n="sym_cough"><i class="fa-solid fa-head-side-cough"></i> Coughing</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Abnormal breathing"> <span data-i18n="sym_breathing"><i class="fa-solid fa-lungs"></i> Abnormal Breathing</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Reduced activity"> <span data-i18n="sym_activity"><i class="fa-solid fa-bed"></i> Reduced Activity</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Unusual movement"> <span data-i18n="sym_limping"><i class="fa-solid fa-person-walking-with-cane"></i> Limping / Gait Arch</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Cutaneous Nodules"> <span data-i18n="sym_nodules"><i class="fa-solid fa-circle-dot"></i> Skin Nodules / Lumps</span></label>
                   </div>
                 </div>
 
                 <div class="form-row mb-3">
                   <div class="col-6">
-                    <label class="form-label" for="assess-duration"><strong>Duration</strong></label>
+                    <label class="form-label" for="assess-duration"><strong data-i18n="form_duration_label">Duration</strong></label>
                     <select id="assess-duration" class="form-control">
                       <option value="Less than 24 hours">Less than 24 hours</option>
                       <option value="1 Day" selected>1 Day</option>
@@ -1142,7 +1187,7 @@
                   </div>
 
                   <div class="col-6">
-                    <label class="form-label" for="assess-severity"><strong>Severity</strong></label>
+                    <label class="form-label" for="assess-severity"><strong data-i18n="form_severity_label">Severity</strong></label>
                     <select id="assess-severity" class="form-control">
                       <option value="Mild">Mild</option>
                       <option value="Moderate" selected>Moderate</option>
@@ -1157,7 +1202,7 @@
                 </div>
 
                 <button type="submit" id="submit-assessment-btn" class="btn btn-primary btn-lg w-100">
-                  <i class="fa-solid fa-wand-magic-sparkles"></i> Run AI Disease & Welfare Detection
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="btn_run_detection">Run AI Disease & Welfare Detection</span>
                 </button>
               </form>
             </div>
@@ -1273,17 +1318,20 @@
         <section id="tab-veterinary" class="dash-tab">
           <div class="tab-header-row flex-between">
             <div>
-              <h3 class="tab-title">Veterinary Assistance & Consultation</h3>
-              <p class="tab-subtitle">Connect with registered government veterinary hospitals and mobile animal healthcare dispensaries.</p>
+              <h3 class="tab-title"><span data-i18n="vet_tab_title">ಪಶುವೈದ್ಯರ ಸಮಾಲೋಚನೆ (Veterinary Assistance & Consultation)</span></h3>
+              <p class="tab-subtitle"><span data-i18n="vet_tab_sub">Connect with registered government veterinary hospitals and mobile animal healthcare dispensaries.</span></p>
             </div>
             <div class="d-flex gap-2">
               <input type="text" id="vet-district-filter" class="form-control" placeholder="Search District (e.g. Dharwad)" style="width: 200px;">
               <button class="btn btn-outline" onclick="filterVets()">Filter</button>
               <button class="btn btn-primary" onclick="openConsultationModal()">
-                <i class="fa-solid fa-paper-plane"></i> Request Consultation
+                <i class="fa-solid fa-paper-plane"></i> <span data-i18n="request_consult_btn">Request Consultation</span>
               </button>
             </div>
           </div>
+
+          <!-- Active Confirmed Slot Banner for Farmer -->
+          <div id="farmer-confirmed-slot-banner" style="display: none;"></div>
 
           <div class="vets-directory-grid" id="vets-directory-container">
             <!-- Dynamic vet cards -->
@@ -1291,7 +1339,7 @@
 
           <div class="card mt-4">
             <div class="card-header">
-              <h4 class="card-title"><i class="fa-solid fa-clipboard-list"></i> My Consultation Requests</h4>
+              <h4 class="card-title"><i class="fa-solid fa-clipboard-list"></i> <span data-i18n="my_consult_requests">ನನ್ನ ಸಮಾಲೋಚನಾ ವಿನಂತಿಗಳು (My Consultation Requests)</span></h4>
             </div>
             <div class="card-body p-0">
               <div class="table-responsive">
@@ -1301,13 +1349,137 @@
                       <th>Date</th>
                       <th>Animal</th>
                       <th>Veterinarian</th>
-                      <th>District</th>
-                      <th>Concern Summary</th>
-                      <th>Status</th>
+                      <th>Urgency</th>
+                      <th>Voice Concern / ಲಕ್ಷಣಗಳು</th>
+                      <th>Assigned Slot / Status</th>
+                      <th>Contact / Action</th>
                     </tr>
                   </thead>
                   <tbody id="consultation-history-tbody">
-                    <tr><td colspan="6" class="text-center py-4 text-muted">Loading consultation history...</td></tr>
+                    <tr><td colspan="7" class="text-center py-4 text-muted">Loading consultation history...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Farmer View of Cow Medical Reports (Prescribed by Doctor) -->
+          <div class="card mt-4">
+            <div class="card-header flex-between">
+              <h4 class="card-title"><i class="fa-solid fa-file-medical text-primary"></i> <span data-i18n="farmer_ehr_title">ಹಸುಗಳ ಅಧಿಕೃತ ವೈದ್ಯಕೀಯ ವರದಿ ಮತ್ತು ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ (Doctor Prescriptions & EHR)</span></h4>
+              <small class="text-muted">Verified by Senior Veterinary Surgeons</small>
+            </div>
+            <div class="card-body">
+              <div id="farmer-ehr-container" class="ehr-cards-grid">
+                <div class="text-muted text-center py-3">ವೈದ್ಯಕೀಯ ವರದಿಗಳು ಲೋಡ್ ಆಗುತ್ತಿವೆ...</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             TAB 8: DOCTOR CONSULTATIONS & EMERGENCY TRIAGE (DOCTOR PORTAL)
+             =================================================================== -->
+        <section id="tab-doctor-consultations" class="dash-tab">
+          <div class="tab-header-row flex-between">
+            <div>
+              <h3 class="tab-title">
+                <i class="fa-solid fa-truck-medical text-danger"></i>
+                ರೈತರ ಸಮಾಲೋಚನೆ ಮತ್ತು ತುರ್ತು ಚಿಕಿತ್ಸಾ ವಿನಂತಿಗಳು (Farmer Requests & Triage)
+              </h3>
+              <p class="tab-subtitle">
+                Review incoming cattle concerns with Danger flags, listen to voice descriptions, and immediately accept and allocate appointment slot times.
+              </p>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline" onclick="loadDoctorConsultations()">
+                <i class="fa-solid fa-arrows-rotate"></i> Refresh Queue
+              </button>
+            </div>
+          </div>
+
+          <!-- Danger Alert Banner if active -->
+          <div id="doctor-urgent-banner" class="doctor-urgent-banner" style="display: none;">
+            <div class="d-flex align-items-center gap-3">
+              <span class="pulse-dot" style="background: #DC2626; width: 14px; height: 14px;"></span>
+              <div>
+                <strong class="text-danger" style="font-size: 1.05rem;">🚨 DANGER: ತುರ್ತು ರೋಗ ಪ್ರಕರಣಗಳು ಕಾಯುತ್ತಿವೆ (Immediate Attention Required)</strong>
+                <p class="mb-0 text-sm text-muted" id="doctor-urgent-banner-text">1 critical animal case needs immediate slot assignment.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header flex-between">
+              <h4 class="card-title"><i class="fa-solid fa-clipboard-check"></i> Patient Triage & Appointment Queue</h4>
+              <span class="badge badge-outline"><i class="fa-solid fa-bolt text-danger"></i> Danger Cases Prioritized</span>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Urgency / ತುರ್ತು</th>
+                      <th>Date & Time</th>
+                      <th>Farmer Name & Phone</th>
+                      <th>Animal</th>
+                      <th>Voice Concern / ಧ್ವನಿ ವಿವರಣೆ</th>
+                      <th>Assigned Slot Time</th>
+                      <th>Action / ಕ್ರಮ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="doctor-consultations-tbody">
+                    <tr><td colspan="7" class="text-center py-4 text-muted">Loading doctor consultation requests...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             TAB 9: DOCTOR COW MEDICAL REPORTS (ELECTRONIC HEALTH RECORDS - EHR)
+             =================================================================== -->
+        <section id="tab-doctor-ehr" class="dash-tab">
+          <div class="tab-header-row flex-between">
+            <div>
+              <h3 class="tab-title">
+                <i class="fa-solid fa-file-medical text-primary"></i>
+                ಹಸುಗಳ ಅಧಿಕೃತ ವೈದ್ಯಕೀಯ ವರದಿ ನಿರ್ವಹಣೆ (Cow Medical Records & Prescriptions)
+              </h3>
+              <p class="tab-subtitle">
+                Maintain clinical diagnoses, medicine prescriptions, dosages, and follow-up schedules for registered cattle.
+              </p>
+            </div>
+            <button class="btn btn-primary" onclick="openCowReportModal()">
+              <i class="fa-solid fa-file-circle-plus"></i> + Add New Medical Report
+            </button>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header flex-between">
+              <h4 class="card-title"><i class="fa-solid fa-book-medical"></i> Verified Cattle Health Records</h4>
+              <div class="d-flex gap-2">
+                <input type="text" id="ehr-filter-input" class="form-control form-control-sm" placeholder="Filter by Cattle Name / Tag..." oninput="filterEHRRecords(this.value)" style="width: 220px;">
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Record Date</th>
+                      <th>Animal Name & Tag</th>
+                      <th>Doctor</th>
+                      <th>Diagnosis</th>
+                      <th>Prescribed Medicines</th>
+                      <th>Vitals</th>
+                      <th>Status</th>
+                      <th>Next Checkup</th>
+                    </tr>
+                  </thead>
+                  <tbody id="doctor-ehr-tbody">
+                    <tr><td colspan="8" class="text-center py-4 text-muted">Loading cow medical reports...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -1466,85 +1638,89 @@
 
       <div class="modal-header text-center">
         <div class="modal-badge-icon"><i class="fa-solid fa-shield-cat"></i></div>
-        <h3 id="auth-modal-title" class="modal-title">Farmer Login</h3>
+        <h3 id="auth-modal-title" class="modal-title">VETAI Portal Access</h3>
         <p class="modal-subtitle">Samriddh Annadata, Samriddh Bharat</p>
       </div>
 
-      <div class="demo-login-box">
-        <div>
-          <strong>Testing VETAI?</strong>
-          <small class="d-block text-muted">Use pre-seeded demo account with sample herd & records.</small>
-        </div>
-        <button type="button" class="btn btn-sm btn-outline-success" onclick="demoLoginAndLaunch()">
-          <i class="fa-solid fa-key"></i> Instant Demo Login
+      <!-- Role Selection Tabs -->
+      <div class="auth-role-tabs mb-3">
+        <button type="button" class="auth-role-tab active" id="tab-btn-farmer-role" onclick="switchAuthRole('farmer')">
+          <i class="fa-solid fa-wheat-awn"></i> <span data-i18n="role_farmer">ರೈತ ಪ್ರವೇಶ (Farmer Access)</span>
+        </button>
+        <button type="button" class="auth-role-tab" id="tab-btn-doctor-role" onclick="switchAuthRole('doctor')">
+          <i class="fa-solid fa-user-doctor"></i> <span data-i18n="role_doctor">ಪಶುವೈದ್ಯರ ಲಾಗಿನ್ (Doctor Portal)</span>
         </button>
       </div>
 
-      <form id="login-form" onsubmit="handleLoginSubmit(event)">
-        <div class="form-group mb-3">
-          <label class="form-label" for="login-email">Email Address <span class="text-danger">*</span></label>
-          <input type="email" id="login-email" class="form-control" placeholder="farmer@vetai.org" required value="ramesh@vetai.org">
-        </div>
-
-        <div class="form-group mb-4">
-          <label class="form-label" for="login-password">Password <span class="text-danger">*</span></label>
-          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required value="farmer123">
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
-          <i class="fa-solid fa-arrow-right-to-bracket"></i> Login to Dashboard
-        </button>
-
-        <p class="text-center text-sm">
-          Don't have an account? <a href="#" onclick="toggleAuthMode('register'); return false;" class="text-primary font-bold">Register as a New Farmer</a>
-        </p>
-      </form>
-
-      <form id="register-form" style="display: none;" onsubmit="handleRegisterSubmit(event)">
-        <div class="form-group mb-2">
-          <label class="form-label">Full Name <span class="text-danger">*</span></label>
-          <input type="text" id="reg-name" class="form-control" placeholder="e.g. Ramesh Patel" required>
-        </div>
-
-        <div class="form-row mb-2">
-          <div class="col-6">
-            <label class="form-label">Email <span class="text-danger">*</span></label>
-            <input type="email" id="reg-email" class="form-control" placeholder="name@domain.com" required>
+      <!-- A. FARMER FORM: Name & Contact Number Access Only -->
+      <div id="farmer-auth-section">
+        <div class="demo-login-box">
+          <div>
+            <strong>ರೈತ ಬಂಧುಗಳೇ (Farmer Test)?</strong>
+            <small class="d-block text-muted">ಕೇವಲ ಹೆಸರು & ಮೊಬೈಲ್ ನಂಬರ್ ಸಾಕು (No password needed).</small>
           </div>
-          <div class="col-6">
-            <label class="form-label">Phone Number <span class="text-danger">*</span></label>
-            <input type="tel" id="reg-phone" class="form-control" placeholder="+91 98765 43210" required>
-          </div>
+          <button type="button" class="btn btn-sm btn-outline-success" onclick="demoFarmerLogin()">
+            <i class="fa-solid fa-key"></i> 1-Click Demo Farmer
+          </button>
         </div>
 
-        <div class="form-group mb-2">
-          <label class="form-label">Password <span class="text-danger">*</span></label>
-          <input type="password" id="reg-password" class="form-control" placeholder="Minimum 6 characters" required>
+        <form id="farmer-access-form" onsubmit="handleFarmerAccessSubmit(event)">
+          <div class="form-group mb-3">
+            <label class="form-label" for="farmer-name-input">
+              <span data-i18n="farmer_name_label">ರೈತರ ಹೆಸರು (Farmer Name)</span> <span class="text-danger">*</span>
+            </label>
+            <input type="text" id="farmer-name-input" class="form-control form-control-lg" placeholder="e.g. Ramesh Patel / ರಮೇಶ್ ಗೌಡ" required value="Ramesh Patel">
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="form-label" for="farmer-phone-input">
+              <span data-i18n="farmer_phone_label">ಸಂಪರ್ಕ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ (Contact Mobile Number)</span> <span class="text-danger">*</span>
+            </label>
+            <div class="phone-input-wrap">
+              <span class="phone-prefix">+91</span>
+              <input type="tel" id="farmer-phone-input" class="form-control form-control-lg" placeholder="10-digit mobile number" maxlength="10" required value="9876543210">
+            </div>
+            <small class="text-muted d-block mt-1">ಪಾಸ್‌ವರ್ಡ್ ಅಥವಾ ಇಮೇಲ್ ಅಗತ್ಯವಿಲ್ಲ • ತ್ವರಿತ ಪ್ರವೇಶ</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg w-100 mb-2">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> <span data-i18n="enter_dashboard_btn">ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪ್ರವೇಶಿಸಿ (Enter Dashboard)</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- B. DOCTOR FORM: Doctor ID/Email & Password -->
+      <div id="doctor-auth-section" style="display: none;">
+        <div class="demo-login-box" style="background: #F3F8FF; border-color: #BFDBFE;">
+          <div>
+            <strong>Veterinary Doctor Test?</strong>
+            <small class="d-block text-muted">Use pre-seeded Senior Surgeon credentials.</small>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-primary" onclick="demoDoctorLogin()">
+            <i class="fa-solid fa-user-doctor"></i> 1-Click Doctor Login
+          </button>
         </div>
 
-        <div class="form-row mb-3">
-          <div class="col-4">
-            <label class="form-label">Village <span class="text-danger">*</span></label>
-            <input type="text" id="reg-village" class="form-control" placeholder="Shivapura" required>
+        <form id="doctor-login-form" onsubmit="handleDoctorLoginSubmit(event)">
+          <div class="form-group mb-3">
+            <label class="form-label" for="doctor-email-input">
+              <span>Doctor ID / Email Address</span> <span class="text-danger">*</span>
+            </label>
+            <input type="text" id="doctor-email-input" class="form-control" placeholder="dr.anand@vetai.org or Mobile" required value="dr.anand@vetai.org">
           </div>
-          <div class="col-4">
-            <label class="form-label">District <span class="text-danger">*</span></label>
-            <input type="text" id="reg-district" class="form-control" placeholder="Dharwad" required>
-          </div>
-          <div class="col-4">
-            <label class="form-label">State <span class="text-danger">*</span></label>
-            <input type="text" id="reg-state" class="form-control" placeholder="Karnataka" required>
-          </div>
-        </div>
 
-        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
-          <i class="fa-solid fa-user-plus"></i> Complete Registration
-        </button>
+          <div class="form-group mb-4">
+            <label class="form-label" for="doctor-password-input">
+              <span>Doctor Password</span> <span class="text-danger">*</span>
+            </label>
+            <input type="password" id="doctor-password-input" class="form-control" placeholder="••••••••" required value="vet123">
+          </div>
 
-        <p class="text-center text-sm">
-          Already registered? <a href="#" onclick="toggleAuthMode('login'); return false;" class="text-primary font-bold">Sign In here</a>
-        </p>
-      </form>
+          <button type="submit" class="btn btn-primary btn-lg w-100 mb-2">
+            <i class="fa-solid fa-stethoscope"></i> Login to Doctor Clinical Portal
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 
@@ -1678,46 +1854,210 @@
     </div>
   </div>
 
-  <!-- 4. REQUEST VETERINARY CONSULTATION MODAL -->
+  <!-- 4. REQUEST VETERINARY CONSULTATION MODAL (VOICE-FIRST CONCERN & DANGER ESCALATION) -->
   <div id="vet-consult-modal" class="modal-backdrop" style="display: none;">
-    <div class="modal-card">
+    <div class="modal-card modal-lg">
       <button class="modal-close-btn" onclick="closeConsultationModal()"><i class="fa-solid fa-xmark"></i></button>
 
       <div class="modal-header">
-        <h3 class="modal-title"><i class="fa-solid fa-user-doctor text-primary"></i> Request Veterinary Consultation</h3>
-        <p class="modal-subtitle">Share AI vision analysis and clinical findings with your taluk animal dispensary.</p>
+        <h3 class="modal-title">
+          <i class="fa-solid fa-user-doctor text-primary"></i> <span data-i18n="consult_modal_title">ಪಶುವೈದ್ಯರ ಸಮಾಲೋಚನೆ ವಿನಂತಿ (Request Veterinary Consultation)</span>
+        </h3>
+        <p class="modal-subtitle">ಧ್ವನಿ ಮೂಲಕ ಲಕ್ಷಣಗಳನ್ನು ತಿಳಿಸಿ ತಕ್ಷಣ ವೈದ್ಯಕೀಯ ಸ್ಲಾಟ್ ಮತ್ತು ಭೇಟಿ ನಿಗದಿಪಡಿಸಿ (Speak concern via voice).</p>
       </div>
 
       <form id="vet-consult-form" onsubmit="submitVetConsultation(event)">
-        <div class="form-group mb-3">
-          <label class="form-label">Select Animal <span class="text-danger">*</span></label>
-          <select id="modal-consult-animal" class="form-control" required>
-            <option value="">-- Choose Animal --</option>
-          </select>
+        <div class="form-row mb-3">
+          <div class="col-6">
+            <label class="form-label"><span data-i18n="select_animal_label">ಜಾನುವಾರು ಆಯ್ಕೆಮಾಡಿ (Select Animal)</span> <span class="text-danger">*</span></label>
+            <select id="modal-consult-animal" class="form-control" required>
+              <option value="">-- Choose Animal --</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label"><span data-i18n="urgency_level_label">ತುರ್ತು ಮಟ್ಟ (Urgency Level)</span> <span class="text-danger">*</span></label>
+            <select id="modal-consult-urgency" class="form-control font-bold" onchange="handleUrgencyChange(this.value)">
+              <option value="Normal">🟢 ಸಾಮಾನ್ಯ (Normal Routine Visit)</option>
+              <option value="Urgent">🟡 ತುರ್ತು (Urgent - within 2-4 hours)</option>
+              <option value="Danger" selected>🔴 DANGER / ತಕ್ಷಣ ಭೇಟಿ ಅಗತ್ಯ (Immediate Hazard)</option>
+            </select>
+          </div>
         </div>
 
-        <div class="form-group mb-3">
-          <label class="form-label">Select Veterinarian / Clinic</label>
-          <select id="modal-consult-vet" class="form-control">
-            <option value="Dr. S. Patil (Taluk Govt Veterinary Hospital)">Dr. S. Patil (Taluk Govt Veterinary Hospital, Dharwad)</option>
-            <option value="Dr. Ramesh H. (Navalgund Mobile Clinic)">Dr. Ramesh H. (Navalgund Mobile Clinic, Dharwad)</option>
-            <option value="District Mobile Veterinary Dispensary">District Mobile Veterinary Dispensary (1962 Unit)</option>
-          </select>
+        <div class="form-row mb-3">
+          <div class="col-6">
+            <label class="form-label"><span data-i18n="select_vet_label">ಪಶುವೈದ್ಯರು / ಆಸ್ಪತ್ರೆ (Select Veterinarian)</span></label>
+            <select id="modal-consult-vet" class="form-control">
+              <option value="Dr. Anand Kulkarni (Senior Veterinary Officer, Dharwad)">Dr. Anand Kulkarni (Senior Veterinary Surgeon, Dharwad)</option>
+              <option value="Dr. S. Patil (Taluk Govt Veterinary Hospital)">Dr. S. Patil (Taluk Govt Veterinary Hospital, Dharwad)</option>
+              <option value="District Mobile Veterinary Dispensary (1962)">District Mobile Veterinary Dispensary (1962 Unit)</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">ಆದ್ಯತೆಯ ಭೇಟಿ ದಿನಾಂಕ (Preferred Date of Visit)</label>
+            <input type="date" id="modal-consult-date" class="form-control">
+          </div>
         </div>
 
+        <!-- VOICE-FIRST DESCRIPTION OF CONCERN -->
         <div class="form-group mb-3">
-          <label class="form-label">Preferred Date of Visit</label>
-          <input type="date" id="modal-consult-date" class="form-control">
-        </div>
+          <label class="form-label d-flex justify-content-between align-items-center">
+            <strong>
+              <i class="fa-solid fa-microphone-lines text-primary"></i> <span data-i18n="voice_concern_label">ಧ್ವನಿ ಮೂಲಕ ತೊಂದರೆ ವಿವರಿಸಿ (Description of Concern via Voice)</span> <span class="text-danger">*</span>
+            </strong>
+            <span class="badge badge-success text-xs"><i class="fa-solid fa-language"></i> ಕನ್ನಡ / Hindi / English Voice</span>
+          </label>
 
-        <div class="form-group mb-4">
-          <label class="form-label">Description of Concern <span class="text-danger">*</span></label>
-          <textarea id="modal-consult-desc" class="form-control" rows="3" placeholder="Describe current condition and urgency..." required></textarea>
+          <!-- Big Voice Recording Control -->
+          <div class="voice-record-action-box mb-2">
+            <button type="button" id="btn-concern-voice-mic" class="btn btn-voice-record w-100" onclick="toggleConcernVoiceRecording()">
+              <i class="fa-solid fa-microphone"></i>
+              <span id="concern-voice-btn-text">🎙️ ಧ್ವನಿ ರೆಕಾರ್ಡ್ ಮಾಡಲು ಇಲ್ಲಿ ಒತ್ತಿ (Tap to Speak Concern)</span>
+            </button>
+            <div id="concern-voice-pulse" class="voice-pulse-indicator" style="display: none;">
+              <span class="pulsing-wave"></span>
+              <span class="pulse-text" id="concern-listening-text">ಮಾತನಾಡಿ... ಧ್ವನಿ ಗುರುತಿಸಲಾಗುತ್ತಿದೆ (Listening in Kannada)...</span>
+            </div>
+          </div>
+
+          <!-- Quick Spoken Suggestion Chips -->
+          <div class="quick-voice-chips mb-2">
+            <small class="text-muted d-block mb-1">ತ್ವರಿತ ಸಲಹೆಗಳು (Quick Presets):</small>
+            <div class="d-flex flex-wrap gap-1">
+              <button type="button" class="btn btn-xs btn-outline-secondary" onclick="setConcernPreset('ನನ್ನ ಹಸುವಿಗೆ ವಿಪರೀತ ಜ್ವರ (104°F) ಮತ್ತು ಮೈಮೇಲೆ ಗಂಟುಗಳಿವೆ, ದಯವಿಟ್ಟು ತಕ್ಷಣ ಬನ್ನಿ.')">
+                🩺 ತೀವ್ರ ಜ್ವರ & ಗಂಟುಗಳು (LSD)
+              </button>
+              <button type="button" class="btn btn-xs btn-outline-secondary" onclick="setConcernPreset('ಕೆಚ್ಚಲು ವಿಪರೀತ ಊದಿಕೊಂಡಿದೆ ಮತ್ತು ಹಾಲು ಬರುತ್ತಿಲ್ಲ, ತಕ್ಷಣ ಪರೀಕ್ಷಿಸಿ.')">
+                🥛 ಕೆಚ್ಚಲು ಬಾವು (Mastitis)
+              </button>
+              <button type="button" class="btn btn-xs btn-outline-secondary" onclick="setConcernPreset('ಎಮ್ಮೆಗೆ ವಿಪರೀತ ಉಸಿರಾಟದ ತೊಂದರೆ ಮತ್ತು ಒಣ ಕೆಮ್ಮು ಹೆಚ್ಚಾಗಿದೆ.')">
+                🫁 ಉಸಿರಾಟದ ತೊಂದರೆ & ಕೆಮ್ಮು
+              </button>
+              <button type="button" class="btn btn-xs btn-outline-secondary" onclick="setConcernPreset('ಜಾನುವಾರು ಕುಂಟುತ್ತಿದೆ ಮತ್ತು ಬಾಯಿಯಿಂದ ನಿರಂತರ ಜೊಲ್ಲು ಸುರಿಯುತ್ತಿದೆ.')">
+                🦶 ಕುಂಟು & ಬಾಯಿ ಹುಣ್ಣು (FMD)
+              </button>
+            </div>
+          </div>
+
+          <textarea id="modal-consult-desc" class="form-control" rows="3" placeholder="ಧ್ವನಿ ಮೂಲಕ ಮಾತನಾಡಿದ ವಿವರಣೆ ಇಲ್ಲಿ ದಾಖಲಾಗುತ್ತದೆ (Spoken voice description transcribes here automatically)..." required></textarea>
         </div>
 
         <div class="modal-footer-btns">
-          <button type="button" class="btn btn-outline" onclick="closeConsultationModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Transmit Request</button>
+          <button type="button" class="btn btn-outline" onclick="closeConsultationModal()">ರದ್ದು (Cancel)</button>
+          <button type="submit" id="btn-submit-consult" class="btn btn-danger btn-lg">
+            <i class="fa-solid fa-bolt"></i> <span data-i18n="transmit_request_btn">ತುರ್ತು ವಿನಂತಿ ರವಾನಿಸಿ (Transmit Request)</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4B. DOCTOR IMMEDIATE SLOT TIME ALLOCATION MODAL -->
+  <div id="doctor-slot-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeDoctorSlotModal()"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-bolt text-danger"></i> ತಕ್ಷಣ ಸ್ಲಾಟ್ ನಿಗದಿಪಡಿಸಿ (Assign Immediate Slot)
+        </h3>
+        <p class="modal-subtitle">Accept farmer danger request and allocate appointment slot time immediately.</p>
+      </div>
+
+      <form id="doctor-slot-form" onsubmit="submitDoctorSlotAllocation(event)">
+        <input type="hidden" id="slot-consultation-id">
+
+        <div class="alert alert-danger mb-3" id="slot-case-summary">
+          <strong>🚨 Danger Case:</strong> <span id="slot-summary-text">Cattle Emergency</span>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label font-bold">ಭೇಟಿ ಸಮಯ ನಿಗದಿಪಡಿಸಿ (Select Visit Slot Time) <span class="text-danger">*</span></label>
+          <div class="quick-slot-pills mb-2 d-flex flex-wrap gap-1">
+            <button type="button" class="btn btn-xs btn-outline-danger" onclick="setQuickSlotTime('ಇಂದು ಮಧ್ಯಾಹ್ನ 12:30 PM (Today 12:30 PM)')">ಇಂದು 12:30 PM</button>
+            <button type="button" class="btn btn-xs btn-outline-danger" onclick="setQuickSlotTime('ಇಂದು ಮಧ್ಯಾಹ್ನ 2:00 PM (Today 2:00 PM)')">ಇಂದು 2:00 PM</button>
+            <button type="button" class="btn btn-xs btn-danger" onclick="setQuickSlotTime('ತಕ್ಷಣ ಹೊರಟಿದ್ದೇನೆ - 30 ನಿಮಿಷದಲ್ಲಿ (Emergency Visit within 30 mins)')">🚨 ತಕ್ಷಣ 30 ನಿಮಿಷದಲ್ಲಿ</button>
+            <button type="button" class="btn btn-xs btn-outline-primary" onclick="setQuickSlotTime('ನಾಳೆ ಬೆಳಿಗ್ಗೆ 10:00 AM (Tomorrow 10 AM)')">ನಾಳೆ ಬೆಳಿಗ್ಗೆ 10 AM</button>
+          </div>
+          <input type="text" id="slot-time-input" class="form-control form-control-lg" placeholder="e.g. ಇಂದು ಮಧ್ಯಾಹ್ನ 12:30 PM" required value="ಇಂದು ಮಧ್ಯಾಹ್ನ 12:30 PM">
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label">ರೈತರಿಗೆ ತಕ್ಷಣದ ಪ್ರಥಮ ಚಿಕಿತ್ಸಾ ಸೂಚನೆ (Immediate Doctor Instructions)</label>
+          <textarea id="slot-doctor-notes" class="form-control" rows="3" placeholder="ಉದಾ: ಹಸುವನ್ನು ತಕ್ಷಣ ಪ್ರತ್ಯೇಕಿಸಿ, ತಂಪಾದ ನೆರಳಿನಲ್ಲಿ ಕಟ್ಟಿ. ನಾನು ತುರ್ತು ಔಷಧ ಕಿಟ್‌ನೊಂದಿಗೆ ತಲುಪುತ್ತಿದ್ದೇನೆ...">ಹಸುವನ್ನು ತಕ್ಷಣವೇ ಇತರ ಪಶುಗಳಿಂದ ಪ್ರತ್ಯೇಕಿಸಿ, ತಂಪಾದ ನೆರಳಿನಲ್ಲಿ ಕಟ್ಟಿ. ಹುಣ್ಣುಗಳಿಗೆ ಪೊಟ್ಯಾಸಿಯಮ್ ಪರ್ಮಾಂಗನೇಟ್ ದ್ರಾವಣ ಹಾಕಿ. ನಾನು ತುರ್ತು ಚಿಕಿತ್ಸಾ ಕಿಟ್‌ನೊಂದಿಗೆ ತಲುಪುತ್ತಿದ್ದೇನೆ.</textarea>
+        </div>
+
+        <div class="modal-footer-btns">
+          <button type="button" class="btn btn-outline" onclick="closeDoctorSlotModal()">ರದ್ದು (Cancel)</button>
+          <button type="submit" class="btn btn-danger btn-lg">
+            <i class="fa-solid fa-check-double"></i> ಸ್ಲಾಟ್ ಖಚಿತಪಡಿಸಿ (Confirm & Notify Farmer)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4C. DOCTOR COW MEDICAL REPORT MODAL (EHR) -->
+  <div id="cow-report-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card modal-lg">
+      <button class="modal-close-btn" onclick="closeCowReportModal()"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <i class="fa-solid fa-file-medical text-primary"></i> ಹಸುವಿನ ಅಧಿಕೃತ ವೈದ್ಯಕೀಯ ವರದಿ ದಾಖಲಿಸಿ (Cow Medical Report & Prescription)
+        </h3>
+        <p class="modal-subtitle">Maintain verified electronic diagnosis, prescription dosages, and follow-up records.</p>
+      </div>
+
+      <form id="cow-report-form" onsubmit="submitCowReport(event)">
+        <div class="form-row mb-3">
+          <div class="col-6">
+            <label class="form-label">ಜಾನುವಾರು ಆಯ್ಕೆ (Select Cattle) <span class="text-danger">*</span></label>
+            <select id="report-animal-select" class="form-control" required>
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">ಮುಂದಿನ ತಪಾಸಣಾ ದಿನಾಂಕ (Next Follow-up Date)</label>
+            <input type="date" id="report-followup-date" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">ಕ್ಲಿನಿಕಲ್ ರೋಗ ನಿರ್ಣಯ (Clinical Diagnosis) <span class="text-danger">*</span></label>
+          <input type="text" id="report-diagnosis-input" class="form-control" placeholder="e.g. Lumpy Skin Disease (Stage-1) / Subclinical Bovine Mastitis" required>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">ಶಿಫಾರಸು ಮಾಡಿದ ಔಷಧಿಗಳು & ಪ್ರಮಾಣ (Prescribed Medicines & Dosages) <span class="text-danger">*</span></label>
+          <textarea id="report-medicines-input" class="form-control" rows="2" placeholder="e.g. Inj Meloxicam 15ml IM, Vitamin AD3E inj 10ml, Topical Povidone Iodine wash BID" required></textarea>
+        </div>
+
+        <div class="form-row mb-3">
+          <div class="col-6">
+            <label class="form-label">ಕ್ಲಿನಿಕಲ್ ತಪಾಸಣೆ & ತಾಪಮಾನ (Vitals & Observations)</label>
+            <input type="text" id="report-vitals-input" class="form-control" placeholder="e.g. Temp: 103.5°F, BCS: 3.2, Respiration: 38 bpm">
+          </div>
+          <div class="col-6">
+            <label class="form-label">ಚಿಕಿತ್ಸಾ ಸ್ಥಿತಿ (Treatment Status)</label>
+            <select id="report-status-select" class="form-control">
+              <option value="Under Active Treatment">Under Active Treatment (ಚಿಕಿತ್ಸೆ ನಡೆಯುತ್ತಿದೆ)</option>
+              <option value="Improving">Improving / ಚೇತರಿಕೆ ಕಾಣುತ್ತಿದೆ</option>
+              <option value="Recovered">Fully Recovered / ಗುಣಮುಖವಾಗಿದೆ</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label">ವೈದ್ಯರ ವಿಶೇಷ ಸೂಚನೆಗಳು (Veterinary Advice & Diet Protocol)</label>
+          <textarea id="report-notes-input" class="form-control" rows="2" placeholder="ಉದಾ: 7 ದಿನಗಳವರೆಗೆ ಪ್ರತ್ಯೇಕ ಕೊಟ್ಟಿಗೆಯಲ್ಲಿ ಕಟ್ಟಿ, ಗಂಜಿಯಂತಹ ಮೆತ್ತನೆಯ ಆಹಾರ ನೀಡಿ..."></textarea>
+        </div>
+
+        <div class="modal-footer-btns">
+          <button type="button" class="btn btn-outline" onclick="closeCowReportModal()">ರದ್ದು (Cancel)</button>
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-floppy-disk"></i> ವರದಿ ಉಳಿಸಿ (Save Medical Report)
+          </button>
         </div>
       </form>
     </div>

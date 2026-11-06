@@ -68,7 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Initialize Multilingual Assistant language and prompt chips
-  setFarmerLanguage(STATE.currentLanguage || "en");
+    // Initialize language (defaulting to Kannada as preferred by user)
+  const savedLang = localStorage.getItem("vetai_lang") || "kn";
+  applyLanguage(savedLang);
 });
 
 
@@ -119,13 +121,15 @@ function switchDashboardTab(tabId) {
   if (activeTab) activeTab.classList.add("active-tab");
 
   const titleMap = {
-    overview: "Dashboard Overview",
-    assessment: "AI Camera Livestock Disease & Welfare Detection",
-    animals: "My Animals",
-    reminders: "Vaccine & Health Reminders",
-    veterinary: "Veterinary Assistance & Consultations",
-    community: "Village-Level Disease Early Warning System",
-    assistant: "Multilingual Voice & Text Assistant"
+    overview: "Dashboard Overview (ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಮುನ್ನೋಟ)",
+    assessment: "AI Camera Livestock Disease & Welfare Detection (ಎಐ ಕ್ಯಾಮೆರಾ ಪರೀಕ್ಷೆ)",
+    animals: "My Animals (ನನ್ನ ಜಾನುವಾರುಗಳು)",
+    reminders: "Vaccine & Health Reminders (ಲಸಿಕೆ ಜ್ಞಾಪನೆಗಳು)",
+    veterinary: "Veterinary Assistance & Consultations (ಪಶುವೈದ್ಯರ ಸಮಾಲೋಚನೆ)",
+    "doctor-consultations": "Doctor Emergency Triage & Slot Allocation (ರೈತರ ವಿನಂತಿಗಳು)",
+    "doctor-ehr": "Cow Electronic Medical Records (ಹಸುಗಳ ಅಧಿಕೃತ ವೈದ್ಯಕೀಯ ವರದಿ)",
+    community: "Village-Level Disease Early Warning System (ಗ್ರಾಮ ರೋಗ ಮುನ್ನೆಚ್ಚರಿಕೆ)",
+    assistant: "Multilingual Voice & Text Assistant (ಬಹುಭಾಷಾ ಸಹಾಯಕ)"
   };
   const titleElem = document.getElementById("dash-active-title");
   if (titleElem) titleElem.textContent = titleMap[tabId] || "Dashboard";
@@ -144,6 +148,10 @@ function switchDashboardTab(tabId) {
     fetchVets();
     fetchConsultations();
     populateAnimalSelects();
+  } else if (tabId === "doctor-consultations") {
+    loadDoctorConsultations();
+  } else if (tabId === "doctor-ehr") {
+    loadDoctorEHR();
   } else if (tabId === "community") {
     fetchCommunityData();
   }
@@ -166,41 +174,90 @@ function toggleMobileMenu() {
 
 
 // ==============================================================================
-// AUTHENTICATION
+// AUTHENTICATION (FARMER NAME & PHONE ACCESS + DOCTOR CLINICAL LOGIN)
 // ==============================================================================
 function openAuthModal(mode = "login") {
   const modal = document.getElementById("auth-modal");
   modal.style.display = "flex";
-  toggleAuthMode(mode);
 }
 
 function closeAuthModal() {
   document.getElementById("auth-modal").style.display = "none";
 }
 
-function toggleAuthMode(mode) {
-  const title = document.getElementById("auth-modal-title");
-  const loginForm = document.getElementById("login-form");
-  const regForm = document.getElementById("register-form");
+function switchAuthRole(role) {
+  const btnFarmer = document.getElementById("tab-btn-farmer-role");
+  const btnDoctor = document.getElementById("tab-btn-doctor-role");
+  const secFarmer = document.getElementById("farmer-auth-section");
+  const secDoctor = document.getElementById("doctor-auth-section");
 
-  if (mode === "register") {
-    title.textContent = "New Farmer Registration";
-    loginForm.style.display = "none";
-    regForm.style.display = "block";
+  if (role === "doctor") {
+    btnFarmer.classList.remove("active");
+    btnDoctor.classList.add("active");
+    secFarmer.style.display = "none";
+    secDoctor.style.display = "block";
   } else {
-    title.textContent = "Farmer Login";
-    loginForm.style.display = "block";
-    regForm.style.display = "none";
+    btnFarmer.classList.add("active");
+    btnDoctor.classList.remove("active");
+    secFarmer.style.display = "block";
+    secDoctor.style.display = "none";
   }
 }
 
-async function handleLoginSubmit(event) {
-  event.preventDefault();
-  const email = document.getElementById("login-email").value.trim();
-  const password = document.getElementById("login-password").value;
+// A. Farmer Access: Name & Contact Number Only (No password)
+async function handleFarmerAccessSubmit(event) {
+  if (event) event.preventDefault();
+  const nameInput = document.getElementById("farmer-name-input");
+  const phoneInput = document.getElementById("farmer-phone-input");
+  const name = nameInput ? nameInput.value.trim() : "Ramesh Patel";
+  const phone = phoneInput ? phoneInput.value.trim() : "9876543210";
+
+  if (!phone || phone.length < 10) {
+    showToast("ದಯವಿಟ್ಟು 10 ಅಂಕಿಗಳ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ (Please enter 10-digit mobile number)", "warning");
+    return;
+  }
 
   try {
-    const res = await fetch(`${API_BASE}/api/login`, {
+    const res = await fetch(`${API_BASE}/api/farmer/access`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, phone })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      STATE.currentUser = data.user;
+      localStorage.setItem("vetai_user", JSON.stringify(data.user));
+      updateAuthUI(true);
+      closeAuthModal();
+      showToast(data.message || `ಸುಸ್ವಾಗತ ${data.user.name}! ರೈತ ಪ್ರವೇಶ ಯಶಸ್ವಿ.`, "success");
+      switchView("dashboard");
+    } else {
+      showToast(data.message || "ಪ್ರವೇಶ ವಿಫಲವಾಗಿದೆ.", "error");
+    }
+  } catch (err) {
+    showToast("ಸರ್ವರ್ ಸಂಪರ್ಕ ದೋಷ (Server connection error).", "error");
+  }
+}
+
+function demoFarmerLogin() {
+  const nameInput = document.getElementById("farmer-name-input");
+  const phoneInput = document.getElementById("farmer-phone-input");
+  if (nameInput) nameInput.value = "Ramesh Patel";
+  if (phoneInput) phoneInput.value = "9876543210";
+  handleFarmerAccessSubmit(null);
+}
+
+// B. Doctor Login: ID/Email + Password
+async function handleDoctorLoginSubmit(event) {
+  if (event) event.preventDefault();
+  const emailInput = document.getElementById("doctor-email-input");
+  const passInput = document.getElementById("doctor-password-input");
+  const email = emailInput ? emailInput.value.trim() : "dr.anand@vetai.org";
+  const password = passInput ? passInput.value : "vet123";
+
+  try {
+    const res = await fetch(`${API_BASE}/api/doctor/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
@@ -212,57 +269,31 @@ async function handleLoginSubmit(event) {
       localStorage.setItem("vetai_user", JSON.stringify(data.user));
       updateAuthUI(true);
       closeAuthModal();
-      showToast(data.message, "success");
+      showToast(`Welcome Dr. Anand Kulkarni! Clinical Console Active.`, "success");
       switchView("dashboard");
+      switchDashboardTab("doctor-consultations");
     } else {
-      showToast(data.message || "Invalid login credentials.", "error");
+      showToast(data.message || "Invalid doctor credentials.", "error");
     }
   } catch (err) {
-    showToast("Network error during login.", "error");
+    showToast("Doctor login connection error.", "error");
   }
 }
 
-async function handleRegisterSubmit(event) {
-  event.preventDefault();
-  const payload = {
-    name: document.getElementById("reg-name").value.trim(),
-    email: document.getElementById("reg-email").value.trim(),
-    phone: document.getElementById("reg-phone").value.trim(),
-    password: document.getElementById("reg-password").value,
-    village: document.getElementById("reg-village").value.trim(),
-    district: document.getElementById("reg-district").value.trim(),
-    state: document.getElementById("reg-state").value.trim()
-  };
-
-  try {
-    const res = await fetch(`${API_BASE}/api/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-
-    if (data.success) {
-      STATE.currentUser = data.user;
-      localStorage.setItem("vetai_user", JSON.stringify(data.user));
-      updateAuthUI(true);
-      closeAuthModal();
-      showToast("Account created successfully! Welcome to VETAI.", "success");
-      switchView("dashboard");
-    } else {
-      showToast(data.message || "Registration failed.", "error");
-    }
-  } catch (err) {
-    showToast("Network error during registration.", "error");
-  }
+function demoDoctorLogin() {
+  const emailInput = document.getElementById("doctor-email-input");
+  const passInput = document.getElementById("doctor-password-input");
+  if (emailInput) emailInput.value = "dr.anand@vetai.org";
+  if (passInput) passInput.value = "vet123";
+  handleDoctorLoginSubmit(null);
 }
 
 async function demoLoginAndLaunch(targetTab = "assessment") {
   try {
-    const res = await fetch(`${API_BASE}/api/login`, {
+    const res = await fetch(`${API_BASE}/api/farmer/access`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: "ramesh@vetai.org", password: "farmer123" })
+      body: JSON.stringify({ name: "Ramesh Patel", phone: "9876543210" })
     });
     const data = await res.json();
 
@@ -287,6 +318,7 @@ async function demoLoginAndLaunch(targetTab = "assessment") {
 function logoutFarmer() {
   stopLandingLiveCamera();
   stopDashLiveCamera();
+  stopDoctorNotificationPolling();
   STATE.currentUser = null;
   localStorage.removeItem("vetai_user");
   updateAuthUI(false);
@@ -300,19 +332,61 @@ function updateAuthUI(isLoggedIn) {
   const navFarmerName = document.getElementById("nav-farmer-name");
   const sidebarUserName = document.getElementById("sidebar-user-name");
   const sidebarUserVillage = document.getElementById("sidebar-user-village");
+  const sidebarNavTitle = document.getElementById("sidebar-nav-title");
+
+  const farmerNavItems = document.querySelectorAll(".nav-item-farmer");
+  const doctorNavItems = document.querySelectorAll(".nav-item-doctor");
+  const topbarScanBtn = document.getElementById("topbar-btn-scan");
+  const topbarRegBtn = document.getElementById("topbar-btn-reg");
+  const topbarDocReqBtn = document.getElementById("topbar-btn-doc-req");
+  const topbarDocEhrBtn = document.getElementById("topbar-btn-doc-ehr");
+  const doctorNotifBell = document.getElementById("doctor-notif-bell-wrap");
 
   if (isLoggedIn && STATE.currentUser) {
     navLoggedOut.style.display = "none";
     navLoggedIn.style.display = "flex";
-    if (navFarmerName) navFarmerName.textContent = STATE.currentUser.name;
-    if (sidebarUserName) sidebarUserName.textContent = STATE.currentUser.name;
-    if (sidebarUserVillage) sidebarUserVillage.textContent = `${STATE.currentUser.village}, ${STATE.currentUser.district}`;
+
+    const isDoctor = STATE.currentUser.role === "doctor";
+
+    if (isDoctor) {
+      // DOCTOR UI MODE
+      farmerNavItems.forEach(el => el.style.display = "none");
+      doctorNavItems.forEach(el => el.style.display = "block");
+      if (topbarScanBtn) topbarScanBtn.style.display = "none";
+      if (topbarRegBtn) topbarRegBtn.style.display = "none";
+      if (topbarDocReqBtn) topbarDocReqBtn.style.display = "inline-flex";
+      if (topbarDocEhrBtn) topbarDocEhrBtn.style.display = "inline-flex";
+      if (doctorNotifBell) doctorNotifBell.style.display = "inline-block";
+
+      if (sidebarNavTitle) sidebarNavTitle.textContent = "DOCTOR CLINICAL CONSOLE";
+      if (sidebarUserName) sidebarUserName.textContent = STATE.currentUser.name;
+      if (sidebarUserVillage) sidebarUserVillage.textContent = `Senior Veterinary Surgeon (${STATE.currentUser.district || 'Dharwad'})`;
+      if (navFarmerName) navFarmerName.innerHTML = `<i class="fa-solid fa-stethoscope"></i> ${STATE.currentUser.name}`;
+
+      startDoctorNotificationPolling();
+    } else {
+      // FARMER UI MODE (Name & Phone access)
+      farmerNavItems.forEach(el => el.style.display = "block");
+      doctorNavItems.forEach(el => el.style.display = "none");
+      if (topbarScanBtn) topbarScanBtn.style.display = "inline-flex";
+      if (topbarRegBtn) topbarRegBtn.style.display = "inline-flex";
+      if (topbarDocReqBtn) topbarDocReqBtn.style.display = "none";
+      if (topbarDocEhrBtn) topbarDocEhrBtn.style.display = "none";
+      if (doctorNotifBell) doctorNotifBell.style.display = "none";
+
+      if (sidebarNavTitle) sidebarNavTitle.textContent = "MAIN NAVIGATION";
+      if (sidebarUserName) sidebarUserName.textContent = STATE.currentUser.name;
+      if (sidebarUserVillage) sidebarUserVillage.textContent = `${STATE.currentUser.village || 'Shivapura'}, ${STATE.currentUser.district || 'Dharwad'} • 📞 ${STATE.currentUser.phone || ''}`;
+      if (navFarmerName) navFarmerName.innerHTML = `<i class="fa-solid fa-wheat-awn"></i> ${STATE.currentUser.name}`;
+
+      stopDoctorNotificationPolling();
+    }
   } else {
     navLoggedOut.style.display = "flex";
     navLoggedIn.style.display = "none";
+    stopDoctorNotificationPolling();
   }
 }
-
 
 // ==============================================================================
 // DASHBOARD OVERVIEW METRICS & CHARTS
@@ -1291,8 +1365,11 @@ async function deleteReminder(id) {
 
 
 // ==============================================================================
-// VETERINARY ASSISTANCE
+// VETERINARY ASSISTANCE (FARMER VOICE-FIRST CONSULTATION REQUESTS)
 // ==============================================================================
+let concernSpeechRec = null;
+let isRecordingConcern = false;
+
 async function fetchVets(district = "") {
   try {
     const res = await fetch(`${API_BASE}/api/vets?district=${encodeURIComponent(district)}`);
@@ -1333,20 +1410,133 @@ function openConsultationModal(vetName = "") {
     if (vetSelect) vetSelect.value = vetName;
   }
 }
+
 function closeConsultationModal() {
   document.getElementById("vet-consult-modal").style.display = "none";
+  if (isRecordingConcern && concernSpeechRec) {
+    concernSpeechRec.stop();
+  }
+}
+
+// Voice-first concern speech recognition
+function toggleConcernVoiceRecording() {
+  const micBtn = document.getElementById("btn-concern-voice-mic");
+  const pulseElem = document.getElementById("concern-voice-pulse");
+  const descInput = document.getElementById("modal-consult-desc");
+  const btnText = document.getElementById("concern-voice-btn-text");
+
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    showToast("ಧ್ವನಿ ಗುರುತಿಸುವಿಕೆ ಬೆಂಬಲಿತವಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಬರೆಯಿರಿ ಅಥವಾ ಸಲಹೆಗಳನ್ನು ಬಳಸಿ.", "warning");
+    return;
+  }
+
+  if (isRecordingConcern && concernSpeechRec) {
+    concernSpeechRec.stop();
+    isRecordingConcern = false;
+    if (micBtn) micBtn.classList.remove("recording");
+    if (pulseElem) pulseElem.style.display = "none";
+    if (btnText) btnText.innerHTML = "🎙️ ಧ್ವನಿ ರೆಕಾರ್ಡ್ ಮಾಡಲು ಇಲ್ಲಿ ಒತ್ತಿ (Tap to Speak Concern)";
+    return;
+  }
+
+  try {
+    concernSpeechRec = new SpeechRec();
+    const currentLang = STATE.currentLanguage || "kn";
+    const langCodeMap = { kn: "kn-IN", hi: "hi-IN", en: "en-IN" };
+    concernSpeechRec.lang = langCodeMap[currentLang] || "kn-IN";
+    concernSpeechRec.continuous = false;
+    concernSpeechRec.interimResults = true;
+
+    concernSpeechRec.onstart = () => {
+      isRecordingConcern = true;
+      if (micBtn) micBtn.classList.add("recording");
+      if (pulseElem) pulseElem.style.display = "flex";
+      if (btnText) btnText.innerHTML = "🔴 ಆಲಿಸಲಾಗುತ್ತಿದೆ... ಮಾತನಾಡಿ (Listening...)";
+      showToast("ಮಾತನಾಡಿ... ಧ್ವನಿ ವಿವರಣೆ ರೆಕಾರ್ಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ", "info");
+    };
+
+    concernSpeechRec.onresult = (evt) => {
+      let transcript = "";
+      for (let i = evt.resultIndex; i < evt.results.length; i++) {
+        transcript += evt.results[i][0].transcript;
+      }
+      if (transcript && descInput) {
+        descInput.value = transcript;
+      }
+    };
+
+    concernSpeechRec.onerror = (err) => {
+      console.warn("Speech recognition error:", err);
+      isRecordingConcern = false;
+      if (micBtn) micBtn.classList.remove("recording");
+      if (pulseElem) pulseElem.style.display = "none";
+      if (btnText) btnText.innerHTML = "🎙️ ಧ್ವನಿ ರೆಕಾರ್ಡ್ ಮಾಡಲು ಇಲ್ಲಿ ಒತ್ತಿ (Tap to Speak Concern)";
+    };
+
+    concernSpeechRec.onend = () => {
+      isRecordingConcern = false;
+      if (micBtn) micBtn.classList.remove("recording");
+      if (pulseElem) pulseElem.style.display = "none";
+      if (btnText) btnText.innerHTML = "🎙️ ಧ್ವನಿ ದಾಖಲಾಗಿದೆ • ಮತ್ತೆ ಮಾತನಾಡಲು ಒತ್ತಿ (Voice Recorded)";
+      if (descInput && descInput.value) {
+        showToast("ಧ್ವನಿ ವಿವರಣೆ ಯಶಸ್ವಿಯಾಗಿ ದಾಖಲಾಗಿದೆ!", "success");
+      }
+    };
+
+    concernSpeechRec.start();
+  } catch (e) {
+    showToast("Microphone access error: " + e.message, "error");
+  }
+}
+
+function setConcernPreset(presetText) {
+  const desc = document.getElementById("modal-consult-desc");
+  if (desc) {
+    desc.value = presetText;
+    showToast("ತ್ವರಿತ ಸಲಹೆ ದಾಖಲಾಗಿದೆ (Preset added)", "info");
+  }
+}
+
+function handleUrgencyChange(urgency) {
+  const btn = document.getElementById("btn-submit-consult");
+  if (!btn) return;
+  if (urgency === "Danger") {
+    btn.className = "btn btn-danger btn-lg";
+    btn.innerHTML = `<i class="fa-solid fa-bolt"></i> <span>ತುರ್ತು ವಿನಂತಿ ರವಾನಿಸಿ (Transmit Request)</span>`;
+  } else if (urgency === "Urgent") {
+    btn.className = "btn btn-warning btn-lg";
+    btn.innerHTML = `<i class="fa-solid fa-clock"></i> <span>ವಿನಂತಿ ಕಳುಹಿಸಿ (Send Urgent Request)</span>`;
+  } else {
+    btn.className = "btn btn-primary btn-lg";
+    btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>ಸಮಾಲೋಚನೆ ಕಳುಹಿಸಿ (Send Request)</span>`;
+  }
 }
 
 async function submitVetConsultation(event) {
   event.preventDefault();
+  if (!STATE.currentUser) {
+    openAuthModal("login");
+    return;
+  }
   const animalId = document.getElementById("modal-consult-animal").value;
+  const urgencyElem = document.getElementById("modal-consult-urgency");
+  const urgency = urgencyElem ? urgencyElem.value : "Danger";
+  const desc = document.getElementById("modal-consult-desc").value.trim();
+  const vetName = document.getElementById("modal-consult-vet").value;
+  const preferredDate = document.getElementById("modal-consult-date").value || null;
+
   const payload = {
     user_id: STATE.currentUser.id,
     animal_id: parseInt(animalId),
-    vet_name: document.getElementById("modal-consult-vet").value,
-    vet_district: STATE.currentUser.district,
-    description: document.getElementById("modal-consult-desc").value.trim(),
-    preferred_date: document.getElementById("modal-consult-date").value || null
+    vet_name: vetName,
+    vet_district: STATE.currentUser.district || "Dharwad",
+    description: desc,
+    urgency_level: urgency,
+    preferred_date: preferredDate,
+    farmer_name: STATE.currentUser.name || "Ramesh Patel",
+    farmer_phone: STATE.currentUser.phone || "9876543210",
+    voice_note_url: "Voice recorded via microphone"
   };
 
   try {
@@ -1360,7 +1550,9 @@ async function submitVetConsultation(event) {
       closeConsultationModal();
       document.getElementById("vet-consult-form").reset();
       fetchConsultations();
-      showToast(data.message, "success");
+      showToast(urgency === "Danger" ? "🚨 ತುರ್ತು ವಿನಂತಿ ಪಶುವೈದ್ಯರಿಗೆ ರವಾನಿಸಲಾಗಿದೆ! ತಕ್ಷಣ ಸ್ಲಾಟ್ ನಿಗದಿಪಡಿಸುತ್ತಾರೆ." : data.message, "success");
+    } else {
+      showToast(data.message || "Failed to submit request", "error");
     }
   } catch (err) {
     showToast("Error requesting consultation.", "error");
@@ -1373,26 +1565,427 @@ async function fetchConsultations() {
     const res = await fetch(`${API_BASE}/api/consultations?user_id=${STATE.currentUser.id}`);
     const data = await res.json();
     const tbody = document.getElementById("consultation-history-tbody");
-    if (!tbody) return;
+    const bannerElem = document.getElementById("farmer-confirmed-slot-banner");
 
-    if (!data.consultations || data.consultations.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">No consultations requested yet.</td></tr>`;
-      return;
+    if (data.consultations && data.consultations.length > 0) {
+      // Check for any confirmed slot
+      const confirmedWithSlot = data.consultations.find(c => c.assigned_slot_time);
+      if (confirmedWithSlot && bannerElem) {
+        bannerElem.style.display = "block";
+        bannerElem.innerHTML = `
+          <div class="doctor-slot-confirmed-card">
+            <div>
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="slot-confirmed-badge"><i class="fa-solid fa-calendar-check"></i> ಭೇಟಿ ಸಮಯ ನಿಗದಿಪಡಿಸಲಾಗಿದೆ (Slot Confirmed)</span>
+                <span class="badge ${confirmedWithSlot.urgency_level === 'Danger' ? 'badge-danger' : 'badge-warning'}">${escapeHtml(confirmedWithSlot.urgency_level || 'Normal')}</span>
+              </div>
+              <h4 class="mb-1 text-success">
+                <i class="fa-solid fa-clock"></i> ನಿಗದಿತ ಭೇಟಿ ಸಮಯ: <strong>${escapeHtml(confirmedWithSlot.assigned_slot_time)}</strong>
+              </h4>
+              <p class="mb-1 text-sm">
+                <strong>ಪಶುವೈದ್ಯರು:</strong> ${escapeHtml(confirmedWithSlot.vet_name || 'Dr. Anand Kulkarni')} • 
+                <strong>ಜಾನುವಾರು:</strong> ${escapeHtml(confirmedWithSlot.animal_name || 'Cow')}
+              </p>
+              ${confirmedWithSlot.doctor_notes ? `<p class="mb-0 text-sm text-muted"><strong>🩺 ವೈದ್ಯರ ಪ್ರಥಮ ಚಿಕಿತ್ಸಾ ಸೂಚನೆ:</strong> ${escapeHtml(confirmedWithSlot.doctor_notes)}</p>` : ''}
+            </div>
+            <div class="d-flex flex-column gap-2 align-items-end">
+              <a href="tel:9448123456" class="btn btn-success btn-lg">
+                <i class="fa-solid fa-phone"></i> 📞 ವೈದ್ಯರಿಗೆ ಕರೆ ಮಾಡಿ (Call Dr: 9448123456)
+              </a>
+              <small class="text-muted">Emergency Dispatch Active</small>
+            </div>
+          </div>
+        `;
+      } else if (bannerElem) {
+        bannerElem.style.display = "none";
+      }
+
+      if (tbody) {
+        tbody.innerHTML = data.consultations.map(c => `
+          <tr class="${c.urgency_level === 'Danger' ? 'table-danger' : ''}">
+            <td><strong>${c.created_at ? c.created_at.slice(0, 16) : ''}</strong></td>
+            <td><strong>${escapeHtml(c.animal_name)}</strong></td>
+            <td>${escapeHtml(c.vet_name || 'Dr. Anand Kulkarni')}</td>
+            <td>
+              <span class="badge ${c.urgency_level === 'Danger' ? 'badge-danger' : (c.urgency_level === 'Urgent' ? 'badge-warning' : 'badge-success')}">
+                ${c.urgency_level === 'Danger' ? '🚨 DANGER' : escapeHtml(c.urgency_level || 'Normal')}
+              </span>
+            </td>
+            <td>
+              <div class="text-sm">
+                <i class="fa-solid fa-microphone-lines text-primary"></i> ${escapeHtml(c.description)}
+              </div>
+            </td>
+            <td>
+              ${c.assigned_slot_time 
+                ? `<span class="badge badge-success"><i class="fa-solid fa-check-circle"></i> ${escapeHtml(c.assigned_slot_time)}</span>`
+                : `<span class="badge badge-warning">${escapeHtml(c.status || 'Pending')}</span>`
+              }
+            </td>
+            <td>
+              <a href="tel:9448123456" class="btn btn-xs btn-outline-success">
+                <i class="fa-solid fa-phone"></i> 9448123456
+              </a>
+            </td>
+          </tr>
+        `).join("");
+      }
+    } else {
+      if (bannerElem) bannerElem.style.display = "none";
+      if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">ಇನ್ನೂ ಯಾವುದೇ ಸಮಾಲೋಚನೆ ಕೋರಿಲ್ಲ (No consultations requested yet).</td></tr>`;
     }
 
-    tbody.innerHTML = data.consultations.map(c => `
-      <tr>
-        <td><strong>${c.created_at.slice(0, 10)}</strong></td>
-        <td>${escapeHtml(c.animal_name)}</td>
-        <td>${escapeHtml(c.vet_name)}</td>
-        <td>${escapeHtml(c.vet_district)}</td>
-        <td>${escapeHtml(c.description)}</td>
-        <td><span class="badge badge-warning">${escapeHtml(c.status)}</span></td>
-      </tr>
-    `).join("");
+    fetchFarmerCowReports();
   } catch (err) {}
 }
 
+async function fetchFarmerCowReports() {
+  const container = document.getElementById("farmer-ehr-container");
+  if (!container) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/doctor/medical-reports`);
+    const data = await res.json();
+    if (!data.reports || data.reports.length === 0) {
+      container.innerHTML = `<div class="text-muted text-center py-3 col-span-full">ಇನ್ನೂ ಯಾವುದೇ ಅಧಿಕೃತ ವೈದ್ಯಕೀಯ ವರದಿ ದಾಖಲಾಗಿಲ್ಲ (No medical records yet).</div>`;
+      return;
+    }
+    container.innerHTML = data.reports.map(r => `
+      <div class="ehr-card">
+        <div class="ehr-card-header">
+          <div>
+            <strong>${escapeHtml(r.animal_name)}</strong>
+            <small class="d-block text-muted">ಟ್ಯಾಗ್: ${escapeHtml(r.ear_tag || 'IN-KA-01')}</small>
+          </div>
+          <span class="badge badge-outline">${escapeHtml(r.treatment_status || 'Active')}</span>
+        </div>
+        <div class="ehr-meta-row">
+          <span>🩺 <strong>${escapeHtml(r.doctor_name || 'Dr. Anand Kulkarni')}</strong></span>
+          <span>📅 ${r.created_at ? r.created_at.slice(0, 10) : ''}</span>
+        </div>
+        <div class="mb-2">
+          <small class="text-muted">ರೋಗ ನಿರ್ಣಯ (Diagnosis):</small>
+          <div class="font-bold text-danger">${escapeHtml(r.clinical_diagnosis)}</div>
+        </div>
+        <div class="ehr-prescription-box">
+          <div class="text-xs text-muted font-bold mb-1">💊 ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ (Prescription):</div>
+          <div>${escapeHtml(r.prescribed_medicines)}</div>
+        </div>
+        ${r.vitals_observations ? `<div class="text-xs text-muted mb-1"><strong>ಲಕ್ಷಣಗಳು:</strong> ${escapeHtml(r.vitals_observations)}</div>` : ''}
+        ${r.next_followup_date ? `<div class="text-xs text-primary font-bold">👉 ಮುಂದಿನ ತಪಾಸಣೆ: ${escapeHtml(r.next_followup_date)}</div>` : ''}
+      </div>
+    `).join("");
+  } catch (e) {
+    if (container) container.innerHTML = `<div class="text-muted text-center py-3">ವೈದ್ಯಕೀಯ ವರದಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.</div>`;
+  }
+}
+
+
+// ==============================================================================
+// DOCTOR PORTAL (EMERGENCY TRIAGE, IMMEDIATE SLOT ALLOCATION & COW EHR)
+// ==============================================================================
+let doctorNotifPollingTimer = null;
+
+async function loadDoctorConsultations() {
+  const tbody = document.getElementById("doctor-consultations-tbody");
+  const urgentBanner = document.getElementById("doctor-urgent-banner");
+  const dangerBadge = document.getElementById("sidebar-danger-badge");
+  if (!tbody) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/doctor/consultations`);
+    const data = await res.json();
+    const consultations = data.consultations || [];
+
+    const dangerCount = consultations.filter(c => c.urgency_level === "Danger" && (!c.assigned_slot_time || c.status === "Pending")).length;
+    if (dangerCount > 0) {
+      if (urgentBanner) {
+        urgentBanner.style.display = "flex";
+        urgentBanner.classList.add("has-danger");
+        document.getElementById("doctor-urgent-banner-text").textContent = 
+          `${dangerCount} ತುರ್ತು ರೋಗ ಪ್ರಕರಣಗಳಿಗೆ ತಕ್ಷಣ ವೈದ್ಯಕೀಯ ಸ್ಲಾಟ್ ನೀಡಬೇಕಾಗಿದೆ (Immediate visit slot allocation required).`;
+      }
+      if (dangerBadge) {
+        dangerBadge.style.display = "inline-block";
+        dangerBadge.textContent = `🚨 ${dangerCount} DANGER`;
+      }
+    } else {
+      if (urgentBanner) urgentBanner.style.display = "none";
+      if (dangerBadge) dangerBadge.style.display = "none";
+    }
+
+    if (consultations.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">ಯಾವುದೇ ಸಮಾಲೋಚನಾ ವಿನಂತಿಗಳಿಲ್ಲ (No incoming consultation requests).</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = consultations.map(c => `
+      <tr class="${c.urgency_level === 'Danger' ? 'table-danger' : ''}">
+        <td>
+          <span class="badge ${c.urgency_level === 'Danger' ? 'badge-danger-pill' : (c.urgency_level === 'Urgent' ? 'badge-warning' : 'badge-success')}">
+            ${c.urgency_level === 'Danger' ? '🚨 DANGER' : escapeHtml(c.urgency_level || 'Normal')}
+          </span>
+        </td>
+        <td><strong>${c.created_at ? c.created_at.slice(0, 16) : ''}</strong></td>
+        <td>
+          <strong>${escapeHtml(c.farmer_name || 'Farmer')}</strong>
+          <small class="d-block text-muted">
+            <a href="tel:${escapeHtml(c.farmer_phone || '9876543210')}" class="text-primary font-bold">
+              📞 ${escapeHtml(c.farmer_phone || '9876543210')}
+            </a>
+          </small>
+        </td>
+        <td>
+          <strong>${escapeHtml(c.animal_name || 'Cattle')}</strong>
+          <small class="d-block text-muted">${escapeHtml(c.vet_district || 'Dharwad')}</small>
+        </td>
+        <td style="max-width: 250px;">
+          <div class="text-sm">
+            <i class="fa-solid fa-microphone-lines text-primary"></i> ${escapeHtml(c.description)}
+          </div>
+        </td>
+        <td>
+          ${c.assigned_slot_time
+            ? `<span class="badge badge-success font-bold"><i class="fa-solid fa-calendar-check"></i> ${escapeHtml(c.assigned_slot_time)}</span>`
+            : `<span class="badge badge-outline text-danger">ಸ್ಲಾಟ್ ಬಾಕಿ ಇದೆ (Pending)</span>`
+          }
+        </td>
+        <td>
+          ${!c.assigned_slot_time
+            ? `<button class="btn btn-sm btn-danger" onclick="openDoctorSlotModal(${c.id}, '${escapeHtml(c.animal_name || 'Cattle')}', '${escapeHtml(c.farmer_name || 'Farmer')}', '${escapeHtml(c.urgency_level || 'Danger')}', '${escapeHtml(c.description || '')}')">
+                <i class="fa-solid fa-bolt"></i> ತಕ್ಷಣ ಸ್ಲಾಟ್ ನಿಗದಿಪಡಿಸಿ
+               </button>`
+            : `<button class="btn btn-sm btn-outline-primary" onclick="openCowReportModal(${c.animal_id})">
+                <i class="fa-solid fa-file-medical"></i> + Add Medical Report
+               </button>`
+          }
+        </td>
+      </tr>
+    `).join("");
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">ವಿನಂತಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.</td></tr>`;
+  }
+}
+
+function openDoctorSlotModal(consultationId, animalName, farmerName, urgency, concern) {
+  document.getElementById("slot-consultation-id").value = consultationId;
+  const summaryText = document.getElementById("slot-summary-text");
+  if (summaryText) {
+    summaryText.innerHTML = `<strong>${escapeHtml(animalName)}</strong> (${escapeHtml(farmerName)}) - ${escapeHtml(urgency)}: "${escapeHtml(concern)}"`;
+  }
+  document.getElementById("doctor-slot-modal").style.display = "flex";
+}
+
+function closeDoctorSlotModal() {
+  document.getElementById("doctor-slot-modal").style.display = "none";
+}
+
+function setQuickSlotTime(timeText) {
+  const slotInput = document.getElementById("slot-time-input");
+  if (slotInput) slotInput.value = timeText;
+}
+
+async function submitDoctorSlotAllocation(event) {
+  event.preventDefault();
+  const id = document.getElementById("slot-consultation-id").value;
+  const slotTime = document.getElementById("slot-time-input").value.trim();
+  const doctorNotes = document.getElementById("slot-doctor-notes").value.trim();
+  const doctorName = STATE.currentUser ? STATE.currentUser.name : "Dr. Anand Kulkarni";
+
+  try {
+    const res = await fetch(`${API_BASE}/api/doctor/consultations/${id}/accept-slot`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        slot_time: slotTime,
+        doctor_notes: doctorNotes,
+        doctor_name: doctorName
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      closeDoctorSlotModal();
+      showToast("ಸ್ಲಾಟ್ ಸಮಯ ಯಶಸ್ವಿಯಾಗಿ ನಿಗದಿಪಡಿಸಲಾಗಿದೆ! ರೈತರಿಗೆ ಅಧಿಸೂಚನೆ ತಲುಪಿದೆ.", "success");
+      loadDoctorConsultations();
+    } else {
+      showToast(data.message || "ಸ್ಲಾಟ್ ನಿಗದಿಪಡಿಸಲು ವಿಫಲವಾಗಿದೆ", "error");
+    }
+  } catch (err) {
+    showToast("Network error submitting slot allocation.", "error");
+  }
+}
+
+// Doctor Notifications
+async function fetchDoctorNotifications() {
+  if (!STATE.currentUser || STATE.currentUser.role !== "doctor") return;
+  try {
+    const res = await fetch(`${API_BASE}/api/doctor/notifications`);
+    const data = await res.json();
+    const notifs = data.notifications || [];
+    const unread = notifs.filter(n => !n.is_read).length;
+
+    const badge = document.getElementById("doctor-notif-badge");
+    if (badge) {
+      if (unread > 0) {
+        badge.style.display = "inline-block";
+        badge.textContent = unread;
+      } else {
+        badge.style.display = "none";
+      }
+    }
+
+    const list = document.getElementById("doctor-notif-list");
+    if (list) {
+      if (notifs.length === 0) {
+        list.innerHTML = `<div class="p-3 text-muted text-center text-sm">ಯಾವುದೇ ಹೊಸ ತುರ್ತು ಅಧಿಸೂಚನೆಗಳಿಲ್ಲ</div>`;
+      } else {
+        list.innerHTML = notifs.map(n => `
+          <div class="notif-item-card ${n.urgency_level === 'Danger' ? 'danger' : ''} ${!n.is_read ? 'unread' : ''}" onclick="switchDashboardTab('doctor-consultations'); toggleDoctorNotifDropdown();">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge ${n.urgency_level === 'Danger' ? 'badge-danger' : 'badge-warning'} text-xs">
+                ${n.urgency_level === 'Danger' ? '🚨 DANGER' : 'URGENT'}
+              </span>
+              <span class="notif-time">${n.created_at ? n.created_at.slice(11, 16) : ''}</span>
+            </div>
+            <div class="mt-1" style="font-size: 0.88rem;">${escapeHtml(n.message)}</div>
+          </div>
+        `).join("");
+      }
+    }
+  } catch (e) {}
+}
+
+function startDoctorNotificationPolling() {
+  fetchDoctorNotifications();
+  if (!doctorNotifPollingTimer) {
+    doctorNotifPollingTimer = setInterval(fetchDoctorNotifications, 8000);
+  }
+}
+
+function stopDoctorNotificationPolling() {
+  if (doctorNotifPollingTimer) {
+    clearInterval(doctorNotifPollingTimer);
+    doctorNotifPollingTimer = null;
+  }
+}
+
+function toggleDoctorNotifDropdown() {
+  const dropdown = document.getElementById("doctor-notif-dropdown");
+  if (!dropdown) return;
+  dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+}
+
+async function markAllDoctorNotificationsRead() {
+  try {
+    await fetch(`${API_BASE}/api/doctor/notifications/mark-read`, { method: "POST" });
+    fetchDoctorNotifications();
+    showToast("ಅಧಿಸೂಚನೆಗಳನ್ನು ಓದಲಾಗಿದೆ", "info");
+  } catch (e) {}
+}
+
+// Doctor Cow Medical Reports (EHR)
+async function loadDoctorEHR() {
+  const tbody = document.getElementById("doctor-ehr-tbody");
+  if (!tbody) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/doctor/medical-reports`);
+    const data = await res.json();
+    const reports = data.reports || [];
+
+    if (reports.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">ಯಾವುದೇ ಹಸುಗಳ ವೈದ್ಯಕೀಯ ವರದಿ ದಾಖಲಾಗಿಲ್ಲ (No cow EHR reports found).</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = reports.map(r => `
+      <tr>
+        <td><strong>${r.created_at ? r.created_at.slice(0, 10) : ''}</strong></td>
+        <td>
+          <strong>${escapeHtml(r.animal_name)}</strong>
+          <small class="d-block text-muted">${escapeHtml(r.ear_tag || 'IN-KA-01')}</small>
+        </td>
+        <td>${escapeHtml(r.doctor_name || 'Dr. Anand Kulkarni')}</td>
+        <td class="font-bold text-danger">${escapeHtml(r.clinical_diagnosis)}</td>
+        <td>
+          <div style="max-width: 260px; font-size: 0.86rem;">${escapeHtml(r.prescribed_medicines)}</div>
+        </td>
+        <td><small>${escapeHtml(r.vitals_observations || 'Normal')}</small></td>
+        <td><span class="badge badge-success">${escapeHtml(r.treatment_status || 'Active')}</span></td>
+        <td><strong>${escapeHtml(r.next_followup_date || 'N/A')}</strong></td>
+      </tr>
+    `).join("");
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">ವೈದ್ಯಕೀಯ ವರದಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಗಿದೆ.</td></tr>`;
+  }
+}
+
+function filterEHRRecords(query) {
+  const tbody = document.getElementById("doctor-ehr-tbody");
+  if (!tbody) return;
+  const q = query.toLowerCase().trim();
+  const rows = tbody.querySelectorAll("tr");
+  rows.forEach(r => {
+    const text = r.textContent.toLowerCase();
+    r.style.display = text.includes(q) ? "" : "none";
+  });
+}
+
+function openCowReportModal(preselectedAnimalId = null) {
+  const select = document.getElementById("report-animal-select");
+  if (select && STATE.animals) {
+    select.innerHTML = STATE.animals.map(a => `
+      <option value="${a.id}" ${preselectedAnimalId === a.id ? 'selected' : ''}>
+        ${escapeHtml(a.name)} (${escapeHtml(a.species)} - ${escapeHtml(a.ear_tag || '')})
+      </option>
+    `).join("");
+  }
+  document.getElementById("cow-report-modal").style.display = "flex";
+}
+
+function closeCowReportModal() {
+  document.getElementById("cow-report-modal").style.display = "none";
+}
+
+async function submitCowReport(event) {
+  event.preventDefault();
+  const animalId = document.getElementById("report-animal-select").value;
+  const diagnosis = document.getElementById("report-diagnosis-input").value.trim();
+  const medicines = document.getElementById("report-medicines-input").value.trim();
+  const vitals = document.getElementById("report-vitals-input").value.trim();
+  const status = document.getElementById("report-status-select").value;
+  const notes = document.getElementById("report-notes-input").value.trim();
+  const followupDate = document.getElementById("report-followup-date").value || null;
+  const doctorName = STATE.currentUser ? STATE.currentUser.name : "Dr. Anand Kulkarni";
+
+  const payload = {
+    clinical_diagnosis: diagnosis,
+    prescribed_medicines: medicines,
+    vitals_observations: vitals,
+    treatment_status: status,
+    doctor_notes: notes,
+    next_followup_date: followupDate,
+    doctor_name: doctorName
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/animals/${animalId}/medical-reports`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+      closeCowReportModal();
+      document.getElementById("cow-report-form").reset();
+      showToast("ಹಸುವಿನ ಅಧಿಕೃತ ವೈದ್ಯಕೀಯ ವರದಿ ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ!", "success");
+      loadDoctorEHR();
+      fetchFarmerCowReports();
+    } else {
+      showToast(data.message || "ವರದಿ ಉಳಿಸಲು ವಿಫಲವಾಗಿದೆ", "error");
+    }
+  } catch (err) {
+    showToast("Network error saving medical report.", "error");
+  }
+}
 
 // ==============================================================================
 // COMMUNITY DISEASE EARLY WARNING SYSTEM (MAIN INNOVATION)
@@ -1639,8 +2232,246 @@ function setFarmerLanguage(lang) {
   showToast(langData.toast, "info");
 }
 
-function changeLanguage(lang) {
+// ==============================================================================
+// GLOBAL MULTILINGUAL I18N SYSTEM (KANNADA • HINDI • ENGLISH)
+// ==============================================================================
+const I18N = {
+  kn: {
+    nav_home: "ಮುಖಪುಟ",
+    nav_camera_detection: "ಎಐ ಕ್ಯಾಮೆರಾ & ಪತ್ತೆ",
+    nav_features: "ವೈಶಿಷ್ಟ್ಯಗಳು",
+    nav_how_it_works: "ಕಾರ್ಯವೈಖರಿ",
+    nav_innovation: "ಗ್ರಾಮ ರೋಗ ಎಚ್ಚರಿಕೆ",
+    nav_about: "ನಮ್ಮ ಬಗ್ಗೆ",
+    nav_login: "ಲಾಗಿನ್",
+    nav_get_started: "ಪ್ರಾರಂಭಿಸಿ",
+    nav_dash: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+    hero_badge: "ಕಾಂತಿರಹಿತ ಎಐ ಕ್ಯಾಮೆರಾ ದೃಷ್ಟಿ • ಯಾವುದೇ ಭೌತಿಕ ಕಾಲರ್‌ಗಳ ಅಗತ್ಯವಿಲ್ಲ",
+    hero_title: "ಕೃತಕ ಬುದ್ಧಿಮತ್ತೆ ಆಧಾರಿತ ಜಾನುವಾರು ಆರೋಗ್ಯ ರಕ್ಷಣೆ",
+    hero_sub: "ಹಾಲು ಮತ್ತು ಮಾಂಸದ ತಳಿಗಳ ಹಸುಗಳಲ್ಲಿ ಯಾವುದೇ ಭೌತಿಕ ಕಾಲರ್ ಅಥವಾ ಟ್ರಾನ್ಸ್‌ಪಾಂಡರ್‌ಗಳಿಲ್ಲದೆ ಕಂಪ್ಯೂಟರ್ ವಿಷನ್, ಮೆಷಿನ್ ಲರ್ನಿಂಗ್ ಹಾಗೂ ಥರ್ಮಲ್ / ಆರ್‌ಜಿಬಿ ಇಮೇಜಿಂಗ್ ಮೂಲಕ ಆರೋಗ್ಯ ಮತ್ತು ಕ್ಷೇಮಾಭಿವೃದ್ಧಿಯನ್ನು ನಿರಂತರವಾಗಿ ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡುತ್ತದೆ.",
+    hero_btn_camera: "ಲೈವ್ ಕ್ಯಾಮೆರಾ & ಫೋಟೋ ಪರೀಕ್ಷೆ",
+    hero_btn_dash: "ಸಂಪೂರ್ಣ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ತೆರೆಯಿರಿ",
+    hero_stat1_num: "ಕಾಲರ್-ಮುಕ್ತ",
+    hero_stat1_lbl: "ಎಐ ಕ್ಯಾಮೆರಾ ತಪಾಸಣೆ",
+    hero_stat2_num: "ಥರ್ಮಲ್ + ಆರ್‌ಜಿಬಿ",
+    hero_stat2_lbl: "ದ್ವಿಪಥ ಇಮೇಜಿಂಗ್",
+    hero_stat3_num: "3 ಭಾಷೆಗಳು",
+    hero_stat3_lbl: "ಕನ್ನಡ • हिंदी • English",
+    camera_tag: "ಸ್ಪರ್ಶರಹಿತ ಸ್ವಯಂಚಾಲಿತ ವಿಷನ್",
+    camera_title: "ಎಐ ಕ್ಯಾಮೆರಾ ಜಾನುವಾರು ರೋಗ & ಕ್ಷೇಮಾಭಿವೃದ್ಧಿ ವ್ಯವಸ್ಥೆ",
+    camera_sub: "ಹಾಲು ಮತ್ತು ಮಾಂಸದ ಹಸುಗಳಲ್ಲಿ ಯಾವುದೇ ಭೌತಿಕ ಕಾಲರ್‌ಗಳಿಲ್ಲದೆ ಕಂಪ್ಯೂಟರ್ ವಿಷನ್, ಮೆಷಿನ್ ಲರ್ನಿಂಗ್ ಹಾಗೂ ಥರ್ಮಲ್ ಅಥವಾ ಆರ್‌ಜಿಬಿ ಇಮೇಜಿಂಗ್ ಮೂಲಕ ಆರೋಗ್ಯ ನಿಯತಾಂಕಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡುತ್ತದೆ.",
+    form_step1: "1. ನೋಂದಾಯಿತ ಜಾನುವಾರು ಆಯ್ಕೆಮಾಡಿ *",
+    form_step2: "2. ಜಾನುವಾರು ಫೋಟೋ & ಲೈವ್ ಕ್ಯಾಮೆರಾ (ಕಾಲರ್-ಮುಕ್ತ ಎಐ ವಿಷನ್)",
+    btn_mode_upload: "ಫೋಟೋ ಅಪ್‌ಲೋಡ್",
+    btn_mode_camera: "ಲೈವ್ ಕ್ಯಾಮೆರಾ",
+    spectrum_hint: "ಓಪನ್‌ಸಿವಿ ಶಾರ್ಪ್ನೆಸ್ & ಥರ್ಮೋಗ್ರಫಿ ಸಕ್ರಿಯವಾಗಿದೆ",
+    dropzone_prompt: "ಫೋಟೋವನ್ನು ಇಲ್ಲಿ ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ಡ್ರ್ಯಾಗ್ ಮಾಡಿ",
+    form_step3: "3. ಕಂಡುಬರುವ ರೋಗ ಲಕ್ಷಣಗಳು * (ಅನ್ವಯವಾಗುವ ಎಲ್ಲವನ್ನೂ ಆಯ್ಕೆಮಾಡಿ)",
+    sym_fever: '<i class="fa-solid fa-temperature-high"></i> ಜ್ವರ (Fever)',
+    sym_appetite: '<i class="fa-solid fa-bowl-food"></i> ಹಸಿವಿನ ಕೊರತೆ (Loss of Appetite)',
+    sym_weakness: '<i class="fa-solid fa-battery-quarter"></i> ಆಯಾಸ / ನಿಶಕ್ತಿ (Weakness)',
+    sym_milk: '<i class="fa-solid fa-droplet"></i> ಹಾಲು ಕಡಿಮೆಯಾಗುವುದು (Reduced Milk)',
+    sym_diarrhoea: '<i class="fa-solid fa-water"></i> ಭೇದಿ (Diarrhoea)',
+    sym_cough: '<i class="fa-solid fa-head-side-cough"></i> ಕೆಮ್ಮು (Coughing)',
+    sym_breathing: '<i class="fa-solid fa-lungs"></i> ಉಸಿರಾಟದ ತೊಂದರೆ (Abnormal Breathing)',
+    sym_activity: '<i class="fa-solid fa-bed"></i> ಚಟುವಟಿಕೆ ಕುಂಠಿತ (Reduced Activity)',
+    sym_limping: '<i class="fa-solid fa-person-walking-with-cane"></i> ಕುಂಟು / ಕಾಲು ನೋವು (Limping)',
+    sym_nodules: '<i class="fa-solid fa-circle-dot"></i> ಚರ್ಮದ ಗಂಟುಗಳು (Skin Nodules)',
+    form_duration_label: "ಲಕ್ಷಣಗಳ ಅವಧಿ",
+    form_severity_label: "ತೀವ್ರತೆ",
+    btn_run_detection: "ಎಐ ರೋಗ ಮತ್ತು ಕ್ಷೇಮಾಭಿವೃದ್ಧಿ ಪತ್ತೆ ಪ್ರಾರಂಭಿಸಿ",
+    nav_overview: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಮುನ್ನೋಟ",
+    nav_camera: "ಎಐ ಕ್ಯಾಮೆರಾ & ಲಕ್ಷಣಗಳು",
+    nav_animals: "ನನ್ನ ಜಾನುವಾರುಗಳು",
+    nav_reminders: "ಲಸಿಕೆ & ಜ್ಞಾಪನೆಗಳು",
+    nav_veterinary: "ಪಶುವೈದ್ಯರ ನೆರವು",
+    nav_assistant: "ಬಹುಭಾಷಾ ಸಹಾಯಕ",
+    topbar_scan: "ಲೈವ್ ಎಐ ಸ್ಕ್ಯಾನ್",
+    topbar_reg: "ಜಾನುವಾರು ನೋಂದಣಿ",
+    topbar_web: "ವೆಬ್‌ಸೈಟ್",
+    logout_btn: "ನಿರ್ಗಮಿಸಿ (Logout)",
+    role_farmer: "ರೈತ ಪ್ರವೇಶ (Farmer Access)",
+    role_doctor: "ಪಶುವೈದ್ಯರ ಲಾಗಿನ್ (Doctor Portal)",
+    farmer_name_label: "ರೈತರ ಹೆಸರು (Farmer Name)",
+    farmer_phone_label: "ಸಂಪರ್ಕ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ (Contact Mobile Number)",
+    enter_dashboard_btn: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪ್ರವೇಶಿಸಿ (Enter Dashboard)",
+    consult_modal_title: "ಪಶುವೈದ್ಯರ ಸಮಾಲೋಚನೆ ವಿನಂತಿ (Request Consultation)",
+    select_animal_label: "ಜಾನುವಾರು ಆಯ್ಕೆಮಾಡಿ (Select Animal)",
+    urgency_level_label: "ತುರ್ತು ಮಟ್ಟ (Urgency Level)",
+    select_vet_label: "ಪಶುವೈದ್ಯರು / ಆಸ್ಪತ್ರೆ (Select Veterinarian)",
+    voice_concern_label: "ಧ್ವನಿ ಮೂಲಕ ತೊಂದರೆ ವಿವರಿಸಿ (Voice Concern Description)",
+    transmit_request_btn: "ತುರ್ತು ವಿನಂತಿ ರವಾನಿಸಿ (Transmit Request)",
+    vet_tab_title: "ಪಶುವೈದ್ಯರ ಸಮಾಲೋಚನೆ & ನೆರವು",
+    vet_tab_sub: "ನೋಂದಾಯಿತ ಸರ್ಕಾರಿ ಪಶು ಆಸ್ಪತ್ರೆಗಳು ಮತ್ತು ಮೊಬೈಲ್ ಚಿಕಿತ್ಸಾಲಯಗಳೊಂದಿಗೆ ಸಂಪರ್ಕ ಸಾಧಿಸಿ.",
+    request_consult_btn: "ಸಮಾಲೋಚನೆ ವಿನಂತಿ",
+    my_consult_requests: "ನನ್ನ ಸಮಾಲೋಚನಾ ವಿನಂತಿಗಳು",
+    farmer_ehr_title: "ಹಸುಗಳ ಅಧಿಕೃತ ವೈದ್ಯಕೀಯ ವರದಿ ಮತ್ತು ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ (Doctor Prescriptions & EHR)"
+  },
+  hi: {
+    nav_home: "होम",
+    nav_camera_detection: "एआई कैमरा व पहचान",
+    nav_features: "विशेषताएं",
+    nav_how_it_works: "कार्यप्रणाली",
+    nav_innovation: "ग्राम रोग चेतावनी",
+    nav_about: "हमारे बारे में",
+    nav_login: "लॉगिन",
+    nav_get_started: "शुरू करें",
+    nav_dash: "डैशबोर्ड",
+    hero_badge: "गैर-इनवेसिव एआई कैमरा दृष्टि • किसी कॉलर की आवश्यकता नहीं",
+    hero_title: "एआई विज़न संचालित पशु स्वास्थ्य निगरानी",
+    hero_sub: "डेयरी और गोमांस मवेशियों के लिए एआई कैमरा सिस्टम बिना किसी कॉलर के कंप्यूटर विज़न, मशीन लर्निंग और थर्मल या आरजीबी इमेजिंग से स्वास्थ्य की निगरानी करता है।",
+    hero_btn_camera: "लाइव कैमरा व फोटो जांच",
+    hero_btn_dash: "पूरा डैशबोर्ड खोलें",
+    hero_stat1_num: "कॉलर-मुक्त",
+    hero_stat1_lbl: "विज़न निगरानी",
+    hero_stat2_num: "थर्मल + आरजीबी",
+    hero_stat2_lbl: "दोहरा स्पेक्ट्रम",
+    hero_stat3_num: "3 भाषाएँ",
+    hero_stat3_lbl: "ಕನ್ನಡ • हिंदी • English",
+    camera_tag: "गैर-आक्रामक दृष्टि प्रणाली",
+    camera_title: "एआई कैमरा पशु रोग व कल्याण प्रणाली",
+    camera_sub: "मवेशियों के स्वास्थ्य और कल्याण मापदंडों की स्वचालित निगरानी बिना किसी भौतिक कॉलर के करता है।",
+    form_step1: "1. पंजीकृत पशु चुनें *",
+    form_step2: "2. पशु फोटो और लाइव कैमरा (कॉलर-मुक्त एआई दृष्टि)",
+    btn_mode_upload: "फोटो अपलोड करें",
+    btn_mode_camera: "लाइव कैमरा",
+    spectrum_hint: "ओपनसीवी शार्पनेस और थर्मोग्राफी सक्रिय है",
+    dropzone_prompt: "फोटो को यहाँ क्लिक या ड्रैग करें",
+    form_step3: "3. दिखाई देने वाले लक्षण * (जो लागू हों चुनें)",
+    sym_fever: '<i class="fa-solid fa-temperature-high"></i> बुखार (Fever)',
+    sym_appetite: '<i class="fa-solid fa-bowl-food"></i> भूख में कमी (Loss of Appetite)',
+    sym_weakness: '<i class="fa-solid fa-battery-quarter"></i> सुस्ती / कमजोरी (Weakness)',
+    sym_milk: '<i class="fa-solid fa-droplet"></i> दूध में कमी (Reduced Milk)',
+    sym_diarrhoea: '<i class="fa-solid fa-water"></i> दस्त (Diarrhoea)',
+    sym_cough: '<i class="fa-solid fa-head-side-cough"></i> खांसी (Coughing)',
+    sym_breathing: '<i class="fa-solid fa-lungs"></i> सांस लेने में तकलीफ (Abnormal Breathing)',
+    sym_activity: '<i class="fa-solid fa-bed"></i> सुस्त गतिविधि (Reduced Activity)',
+    sym_limping: '<i class="fa-solid fa-person-walking-with-cane"></i> लंगड़ापन (Limping)',
+    sym_nodules: '<i class="fa-solid fa-circle-dot"></i> त्वचा की गांठें (Skin Nodules)',
+    form_duration_label: "अवधि",
+    form_severity_label: "तीव्रता",
+    btn_run_detection: "एआई रोग एवं स्वास्थ्य जांच चलाएं",
+    nav_overview: "डैशबोर्ड सारांश",
+    nav_camera: "एआई कैमरा व लक्षण",
+    nav_animals: "मेरे पशु",
+    nav_reminders: "टीकाकरण व स्मरणपत्र",
+    nav_veterinary: "पशु चिकित्सक सहायता",
+    nav_assistant: "बहुभाषी सहायक",
+    topbar_scan: "लाइव एआई स्कैन",
+    topbar_reg: "पशु पंजीकरण",
+    topbar_web: "वेबसाइट",
+    logout_btn: "लॉगआउट",
+    role_farmer: "किसान प्रवेश (Farmer Access)",
+    role_doctor: "पशु चिकित्सक पोर्टल (Doctor Login)",
+    farmer_name_label: "किसान का नाम (Farmer Name)",
+    farmer_phone_label: "संपर्क मोबाइल नंबर (Contact Mobile Number)",
+    enter_dashboard_btn: "डैशबोर्ड में प्रवेश करें",
+    consult_modal_title: "पशु चिकित्सक परामर्श अनुरोध",
+    select_animal_label: "पशु चुनें",
+    urgency_level_label: "आपातकालीन स्तर",
+    select_vet_label: "पशु चिकित्सक / अस्पताल",
+    voice_concern_label: "आवाज द्वारा समस्या बताएं (Voice Concern)",
+    transmit_request_btn: "आपातकालीन अनुरोध भेजें",
+    vet_tab_title: "पशु चिकित्सा परामर्श व सहायता",
+    vet_tab_sub: "सरकारी पशु चिकित्सालयों और सचल औषधालयों से तत्काल परामर्श लें।",
+    request_consult_btn: "परामर्श का अनुरोध करें",
+    my_consult_requests: "मेरे परामर्श अनुरोध",
+    farmer_ehr_title: "गायों का आधिकारिक मेडिकल रिकॉर्ड व नुस्खे"
+  },
+  en: {
+    nav_home: "Home",
+    nav_camera_detection: "AI Camera & Detection",
+    nav_features: "Features",
+    nav_how_it_works: "How It Works",
+    nav_innovation: "Innovation",
+    nav_about: "About Us",
+    nav_login: "Login",
+    nav_get_started: "Get Started",
+    nav_dash: "Dashboard",
+    hero_badge: "Non-Invasive AI Camera Vision • No Physical Collars Required",
+    hero_title: "Automated Livestock Healthcare <br><span class=\"text-accent\">Powered by AI Vision.</span>",
+    hero_sub: "AI camera systems for dairy and beef cattle use computer vision, machine learning, and thermal or RGB imaging to monitor health and welfare parameters automatically without physical collars or transponders.",
+    hero_btn_camera: "Launch Live Camera & Upload",
+    hero_btn_dash: "Open Full Dashboard",
+    hero_stat1_num: "Collar-Free",
+    hero_stat1_lbl: "Vision Monitoring",
+    hero_stat2_num: "Thermal + RGB",
+    hero_stat2_lbl: "Dual Spectrum",
+    hero_stat3_num: "3 Languages",
+    hero_stat3_lbl: "ಕನ್ನಡ • हिंदी • English",
+    camera_tag: "Interactive Non-Invasive Vision",
+    camera_title: "AI Camera Livestock Disease & Welfare System",
+    camera_sub: "AI camera systems for dairy and beef cattle use computer vision, machine learning, and thermal or RGB imaging to monitor health and welfare parameters automatically without physical collars or transponders.",
+    form_step1: "1. Select Registered Animal *",
+    form_step2: "2. Animal Photograph & Live Camera (Collar-Free AI Vision)",
+    btn_mode_upload: "Upload Photo",
+    btn_mode_camera: "Live Camera",
+    spectrum_hint: "OpenCV Sharpness & Thermography Active",
+    dropzone_prompt: "Click or drag photograph here",
+    form_step3: "3. Observable Symptoms * (Select all that apply)",
+    sym_fever: '<i class="fa-solid fa-temperature-high"></i> Fever',
+    sym_appetite: '<i class="fa-solid fa-bowl-food"></i> Loss of Appetite',
+    sym_weakness: '<i class="fa-solid fa-battery-quarter"></i> Weakness',
+    sym_milk: '<i class="fa-solid fa-droplet"></i> Reduced Milk',
+    sym_diarrhoea: '<i class="fa-solid fa-water"></i> Diarrhoea',
+    sym_cough: '<i class="fa-solid fa-head-side-cough"></i> Coughing',
+    sym_breathing: '<i class="fa-solid fa-lungs"></i> Abnormal Breathing',
+    sym_activity: '<i class="fa-solid fa-bed"></i> Reduced Activity',
+    sym_limping: '<i class="fa-solid fa-person-walking-with-cane"></i> Limping / Gait Arch',
+    sym_nodules: '<i class="fa-solid fa-circle-dot"></i> Skin Nodules / Lumps',
+    form_duration_label: "Duration",
+    form_severity_label: "Severity",
+    btn_run_detection: "Run AI Disease & Welfare Detection",
+    nav_overview: "Dashboard Overview",
+    nav_camera: "AI Camera & Symptoms",
+    nav_animals: "My Animals",
+    nav_reminders: "Vaccine & Reminders",
+    nav_veterinary: "Veterinary Assistance",
+    nav_assistant: "Multilingual Assistant",
+    topbar_scan: "Live AI Scan",
+    topbar_reg: "Register Animal",
+    topbar_web: "Website",
+    logout_btn: "Logout",
+    role_farmer: "Farmer Access (ರೈತ ಪ್ರವೇಶ)",
+    role_doctor: "Doctor Portal (ವೈದ್ಯರ ಲಾಗಿನ್)",
+    farmer_name_label: "Farmer Name (ರೈತರ ಹೆಸರು)",
+    farmer_phone_label: "Contact Mobile Number (ಸಂಪರ್ಕ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ)",
+    enter_dashboard_btn: "Enter Dashboard (ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪ್ರವೇಶಿಸಿ)",
+    consult_modal_title: "Request Veterinary Consultation",
+    select_animal_label: "Select Animal (ಜಾನುವಾರು ಆಯ್ಕೆ)",
+    urgency_level_label: "Urgency Level (ತುರ್ತು ಮಟ್ಟ)",
+    select_vet_label: "Select Veterinarian",
+    voice_concern_label: "Description of Concern via Voice",
+    transmit_request_btn: "Transmit Request",
+    vet_tab_title: "Veterinary Assistance & Consultation",
+    vet_tab_sub: "Connect with registered government veterinary hospitals and mobile dispensaries.",
+    request_consult_btn: "Request Consultation",
+    my_consult_requests: "My Consultation Requests",
+    farmer_ehr_title: "Doctor Prescriptions & Cow Medical Records (EHR)"
+  }
+};
+
+function applyLanguage(lang) {
+  STATE.currentLanguage = lang;
+  localStorage.setItem("vetai_lang", lang);
+
+  const globalSelect = document.getElementById("global-lang-select");
+  if (globalSelect) globalSelect.value = lang;
+
+  const dict = I18N[lang] || I18N["en"];
+  document.querySelectorAll("[data-i18n]").forEach(elem => {
+    const key = elem.getAttribute("data-i18n");
+    if (dict[key]) {
+      elem.innerHTML = dict[key];
+    }
+  });
+
+  // Sync assistant chatbot language & prompt chips
   setFarmerLanguage(lang);
+}
+
+function changeLanguage(lang) {
+  applyLanguage(lang);
 }
 
 function changeAssistantLang(lang) {

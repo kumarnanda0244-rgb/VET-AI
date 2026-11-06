@@ -198,6 +198,32 @@ def init_db():
         recommended_actions TEXT NOT NULL,
         is_active INTEGER DEFAULT 1
     );
+
+    CREATE TABLE IF NOT EXISTS cow_medical_reports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        animal_id INTEGER NOT NULL,
+        doctor_id INTEGER,
+        doctor_name TEXT NOT NULL,
+        diagnosis TEXT NOT NULL,
+        medicines TEXT NOT NULL,
+        treatment_notes TEXT,
+        vitals TEXT,
+        follow_up_date TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (animal_id) REFERENCES animals (id)
+    );
+
+    CREATE TABLE IF NOT EXISTS doctor_notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        doctor_id INTEGER,
+        consultation_id INTEGER,
+        animal_id INTEGER,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        urgency TEXT DEFAULT 'Normal',
+        is_read INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
     """)
 
     conn.commit()
@@ -222,12 +248,78 @@ def init_db():
                     f"ALTER TABLE health_assessments ADD COLUMN {col_name} {col_type}")
             except Exception:
                 pass
+
+    # Schema migration for users table (role)
+    cursor.execute("PRAGMA table_info(users)")
+    user_cols = [c[1] for c in cursor.fetchall()]
+    if "role" not in user_cols:
+        try:
+            cursor.execute("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'farmer'")
+        except Exception:
+            pass
+
+    # Schema migration for veterinary_consultations table
+    cursor.execute("PRAGMA table_info(veterinary_consultations)")
+    vc_cols = [c[1] for c in cursor.fetchall()]
+    vc_migrations = [
+        ("urgency_level", "TEXT DEFAULT 'Normal'"),
+        ("assigned_slot_time", "TEXT"),
+        ("doctor_id", "INTEGER"),
+        ("doctor_name", "TEXT"),
+        ("doctor_notes", "TEXT"),
+        ("voice_note_url", "TEXT"),
+        ("farmer_name", "TEXT"),
+        ("farmer_phone", "TEXT")
+    ]
+    for col_name, col_type in vc_migrations:
+        if col_name not in vc_cols:
+            try:
+                cursor.execute(f"ALTER TABLE veterinary_consultations ADD COLUMN {col_name} {col_type}")
+            except Exception:
+                pass
     conn.commit()
 
     # Seed demo user and animals if table is empty
     cursor.execute("SELECT COUNT(*) as count FROM users")
     if cursor.fetchone()["count"] == 0:
         seed_demo_data(conn)
+
+    # Ensure Doctor account exists
+    cursor.execute("SELECT id FROM users WHERE email = 'dr.anand@vetai.org' OR role = 'doctor'")
+    doc = cursor.fetchone()
+    if not doc:
+        doc_pass = generate_password_hash("vet123")
+        cursor.execute("""
+            INSERT INTO users (name, email, phone, password_hash, village, district, state, role)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'doctor')
+        """, ("Dr. Anand Kulkarni", "dr.anand@vetai.org", "9448123456", doc_pass, "Taluk Veterinary Hospital", "Dharwad", "Karnataka"))
+        conn.commit()
+        doc_id = cursor.lastrowid
+    else:
+        doc_id = doc["id"]
+
+    # Seed initial medical report for cow if none exists
+    cursor.execute("SELECT COUNT(*) as count FROM cow_medical_reports")
+    if cursor.fetchone()["count"] == 0:
+        cursor.execute("""
+            INSERT INTO cow_medical_reports (animal_id, doctor_id, doctor_name, diagnosis, medicines, treatment_notes, vitals, follow_up_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (1, doc_id, "Dr. Anand Kulkarni",
+              "Bovine Mastitis (Subclinical Left Quarter) & Mild Pyrexia",
+              "Intramammary Infusion (Cloxacillin) + Meloxicam 15ml IM + Vitamin AD3E inj",
+              "Rectal temperature 102.4°F. Left forequarter slightly firm with micro-clots in milk. Advised regular stripping and potassium permanganate wash.",
+              "Temp: 102.4°F, Respiration: 34 bpm, BCS: 3.25",
+              (datetime.datetime.now() + datetime.timedelta(days=5)).strftime("%Y-%m-%d")))
+        conn.commit()
+
+    # Seed initial doctor notification if none exists
+    cursor.execute("SELECT COUNT(*) as count FROM doctor_notifications")
+    if cursor.fetchone()["count"] == 0:
+        cursor.execute("""
+            INSERT INTO doctor_notifications (doctor_id, consultation_id, animal_id, title, message, urgency, is_read)
+            VALUES (?, NULL, 1, '🚨 ತುರ್ತು ಎಚ್ಚರಿಕೆ / Emergency Consultation Alert', 'ಶಿವಪುರ ಗ್ರಾಮದ ರಮೇಶ್ ಅವರ ಗೌರಿ (ಹಸು) ತೀವ್ರ ಜ್ವರ (104°F) ಮತ್ತು ಚರ್ಮದ ಗಂಟು ಲಕ್ಷಣಗಳನ್ನು ತೋರಿಸಿದೆ.', 'Danger', 0)
+        """, (doc_id,))
+        conn.commit()
 
     conn.close()
 
@@ -1525,13 +1617,105 @@ def login():
         "phone": user["phone"],
         "village": user["village"],
         "district": user["district"],
-        "state": user["state"]
+        "state": user["state"],
+        "role": user["role"] if ("role" in user.keys() and user["role"]) else "farmer"
     }
 
     return jsonify({
         "success": True,
         "message": f"Welcome back, {user['name']}!",
         "user": user_dict
+    })
+
+
+@app.route("/api/farmer/access", methods=["POST"])
+def farmer_access():
+    """Simplified Farmer Access using ONLY Name and Contact Mobile Number."""
+    data = request.json or {}
+    name = data.get("name", "").strip()
+    phone = data.get("phone", "").strip()
+
+    if not name or not phone:
+        return jsonify({"success": False, "message": "ರೈತರ ಹೆಸರು ಮತ್ತು ಸಂಪರ್ಕ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಅಗತ್ಯವಿದೆ / Name and contact number required."}), 400
+
+    phone_clean = "".join(filter(str.isdigit, phone))
+    if len(phone_clean) < 10:
+        return jsonify({"success": False, "message": "ದಯವಿಟ್ಟು 10 ಅಂಕಿಗಳ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ / Please enter a valid 10-digit phone number."}), 400
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # Search for farmer with this phone number (matching last 10 digits)
+    cursor.execute("SELECT * FROM users WHERE phone LIKE ? OR phone LIKE ?", (f"%{phone_clean[-10:]}", f"%{phone}%"))
+    user = cursor.fetchone()
+
+    if not user:
+        # Automatically register this farmer!
+        auto_email = f"farmer_{phone_clean[-10:]}@vetai.local"
+        default_pass = generate_password_hash("farmer123")
+        cursor.execute("""
+            INSERT INTO users (name, email, phone, password_hash, village, district, state, role)
+            VALUES (?, ?, ?, ?, 'Shivapura', 'Dharwad', 'Karnataka', 'farmer')
+        """, (name, auto_email, phone, default_pass))
+        conn.commit()
+        user_id = cursor.lastrowid
+        cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        user = cursor.fetchone()
+
+    conn.close()
+
+    user_dict = {
+        "id": user["id"],
+        "name": user["name"],
+        "phone": user["phone"],
+        "email": user["email"],
+        "village": user["village"],
+        "district": user["district"],
+        "state": user["state"],
+        "role": user["role"] if ("role" in user.keys() and user["role"]) else "farmer"
+    }
+
+    return jsonify({
+        "success": True,
+        "message": f"ನಮಸ್ಕಾರ {user['name']}! VETAI ಗೆ ಸುಸ್ವಾಗತ (Welcome {user['name']}!).",
+        "user": user_dict
+    })
+
+
+@app.route("/api/doctor/login", methods=["POST"])
+def doctor_login():
+    """Dedicated Doctor Login with Doctor ID/Email and Password."""
+    data = request.json or {}
+    identifier = data.get("email", "").strip().lower()
+    password = data.get("password", "")
+
+    if not identifier or not password:
+        return jsonify({"success": False, "message": "Doctor ID/Email and password required."}), 400
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE (email = ? OR phone = ?) AND role = 'doctor'", (identifier, identifier))
+    doc = cursor.fetchone()
+    conn.close()
+
+    if not doc or not check_password_hash(doc["password_hash"], password):
+        return jsonify({"success": False, "message": "Invalid doctor credentials. Please check Doctor ID/Email or Password."}), 401
+
+    doc_dict = {
+        "id": doc["id"],
+        "name": doc["name"],
+        "email": doc["email"],
+        "phone": doc["phone"],
+        "village": doc["village"],
+        "district": doc["district"],
+        "state": doc["state"],
+        "role": "doctor"
+    }
+
+    return jsonify({
+        "success": True,
+        "message": f"Welcome, Dr. {doc['name']}!",
+        "user": doc_dict
     })
 
 
@@ -1969,7 +2153,7 @@ def handle_consultations():
     if request.method == "GET":
         user_id = request.args.get("user_id")
         cursor.execute("""
-            SELECT vc.*, a.animal_name, a.tag_id
+            SELECT vc.*, a.animal_name, a.tag_id, a.animal_type
             FROM veterinary_consultations vc
             JOIN animals a ON vc.animal_id = a.id
             WHERE vc.user_id = ?
@@ -1985,21 +2169,223 @@ def handle_consultations():
     assessment_id = data.get("assessment_id")
     vet_name = data.get("vet_name", "District Veterinary Officer")
     vet_district = data.get("vet_district", "Dharwad")
-    desc = data.get("description", "")
+    desc = data.get("description", "").strip()
+    urgency_level = data.get("urgency_level", "Normal").strip()
+    voice_note_url = data.get("voice_note_url", "").strip()
+    farmer_name = data.get("farmer_name", "").strip()
+    farmer_phone = data.get("farmer_phone", "").strip()
     pref_date = data.get(
         "preferred_date", datetime.datetime.now().strftime("%Y-%m-%d"))
 
+    # Fetch user info if missing
+    if user_id and (not farmer_name or not farmer_phone):
+        cursor.execute("SELECT name, phone, village FROM users WHERE id = ?", (user_id,))
+        u = cursor.fetchone()
+        if u:
+            farmer_name = farmer_name or u["name"]
+            farmer_phone = farmer_phone or u["phone"]
+            village = u["village"]
+        else:
+            village = "Shivapura"
+    else:
+        village = "Shivapura"
+
+    # Fetch animal info
+    animal_name = "Cattle"
+    if animal_id:
+        cursor.execute("SELECT animal_name, tag_id FROM animals WHERE id = ?", (animal_id,))
+        an = cursor.fetchone()
+        if an:
+            animal_name = f"{an['animal_name']} ({an['tag_id']})"
+
     cursor.execute("""
-        INSERT INTO veterinary_consultations (user_id, animal_id, assessment_id, vet_name, vet_district, description, preferred_date, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'Requested')
-    """, (user_id, animal_id, assessment_id, vet_name, vet_district, desc, pref_date))
+        INSERT INTO veterinary_consultations (
+            user_id, animal_id, assessment_id, vet_name, vet_district,
+            description, preferred_date, status, urgency_level, voice_note_url,
+            farmer_name, farmer_phone
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'Requested', ?, ?, ?, ?)
+    """, (user_id, animal_id, assessment_id, vet_name, vet_district, desc, pref_date,
+          urgency_level, voice_note_url, farmer_name, farmer_phone))
+    cons_id = cursor.lastrowid
+
+    # Automatically notify Doctor if Danger / Urgent
+    if urgency_level in ["Danger", "Urgent", "Critical"]:
+        cursor.execute("SELECT id FROM users WHERE role = 'doctor' LIMIT 1")
+        doc_row = cursor.fetchone()
+        doc_id = doc_row["id"] if doc_row else 1
+        notif_title = f"🚨 ತುರ್ತು ಸಮಾಲೋಚನೆ ವಿನಂತಿ ({urgency_level.upper()}) / Emergency Request"
+        notif_msg = f"{farmer_name} ({village}) - {animal_name}: {desc[:90]}. ಮೊಬೈಲ್: {farmer_phone}"
+        cursor.execute("""
+            INSERT INTO doctor_notifications (doctor_id, consultation_id, animal_id, title, message, urgency, is_read)
+            VALUES (?, ?, ?, ?, ?, ?, 0)
+        """, (doc_id, cons_id, animal_id, notif_title, notif_msg, urgency_level))
+
     conn.commit()
     conn.close()
 
     return jsonify({
         "success": True,
-        "message": "Veterinary consultation request transmitted successfully. The dispensary has been notified."
+        "message": "Veterinary consultation request transmitted successfully. The dispensary has been notified.",
+        "consultation_id": cons_id,
+        "urgency_level": urgency_level
     }), 201
+
+
+@app.route("/api/doctor/consultations", methods=["GET"])
+def doctor_get_consultations():
+    """Retrieve all farmer consultation requests for the Doctor Portal with urgency ranking."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT vc.*, a.animal_name, a.tag_id, a.animal_type, a.breed,
+               u.name as owner_name, u.phone as owner_phone, u.village as owner_village
+        FROM veterinary_consultations vc
+        JOIN animals a ON vc.animal_id = a.id
+        JOIN users u ON vc.user_id = u.id
+        ORDER BY CASE WHEN vc.urgency_level = 'Danger' THEN 1
+                      WHEN vc.urgency_level = 'Urgent' THEN 2
+                      ELSE 3 END, vc.id DESC
+    """)
+    rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+    return jsonify({"success": True, "consultations": rows})
+
+
+@app.route("/api/doctor/consultations/<int:cons_id>/accept-slot", methods=["POST"])
+def doctor_accept_slot(cons_id):
+    """Doctor accepts consultation request and allocates an immediate slot time."""
+    data = request.json or {}
+    slot_time = (data.get("slot_time") or data.get("assigned_slot_time") or "Immediate - within 30 mins").strip()
+    doctor_notes = data.get("doctor_notes", "").strip()
+    doctor_name = data.get("doctor_name", "Dr. Anand Kulkarni").strip()
+    doctor_phone = data.get("doctor_phone", "9448123456").strip()
+
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE veterinary_consultations
+        SET status = 'Accepted - Slot Confirmed',
+            assigned_slot_time = ?,
+            doctor_notes = ?,
+            doctor_name = ?
+        WHERE id = ?
+    """, (slot_time, doctor_notes, f"{doctor_name} ({doctor_phone})", cons_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "success": True,
+        "message": f"ಸ್ಲಾಟ್ ಸಮಯ '{slot_time}' ಯಶಸ್ವಿಯಾಗಿ ನಿಗದಿಪಡಿಸಲಾಗಿದೆ! (Slot confirmed successfully).",
+        "assigned_slot_time": slot_time
+    })
+
+
+@app.route("/api/doctor/notifications", methods=["GET"])
+def get_doctor_notifications():
+    """Retrieve emergency notifications for the Doctor Portal."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM doctor_notifications ORDER BY is_read ASC, id DESC LIMIT 25")
+    notifs = []
+    for r in cursor.fetchall():
+        d = dict(r)
+        d["urgency_level"] = d.get("urgency", "Normal")
+        notifs.append(d)
+    unread_count = sum(1 for n in notifs if n["is_read"] == 0)
+    conn.close()
+    return jsonify({"success": True, "notifications": notifs, "unread_count": unread_count})
+
+
+@app.route("/api/doctor/notifications/mark-read", methods=["POST"])
+def mark_doctor_notifications_read():
+    """Mark all doctor notifications as read."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE doctor_notifications SET is_read = 1")
+    conn.commit()
+    conn.close()
+    return jsonify({"success": True, "message": "All notifications marked as read."})
+
+
+@app.route("/api/animals/<int:animal_id>/medical-reports", methods=["GET", "POST"])
+def handle_animal_medical_reports(animal_id):
+    """Doctor maintains formal medical reports, prescriptions, and health records for cows."""
+    conn = get_db()
+    cursor = conn.cursor()
+
+    if request.method == "GET":
+        cursor.execute("""
+            SELECT cmr.*, a.animal_name, a.tag_id, a.breed, a.animal_type
+            FROM cow_medical_reports cmr
+            JOIN animals a ON cmr.animal_id = a.id
+            WHERE cmr.animal_id = ?
+            ORDER BY cmr.id DESC
+        """, (animal_id,))
+        reports = []
+        for r in cursor.fetchall():
+            d = dict(r)
+            d["clinical_diagnosis"] = d.get("diagnosis", "")
+            d["prescribed_medicines"] = d.get("medicines", "")
+            d["vitals_observations"] = d.get("vitals", "")
+            d["treatment_status"] = d.get("treatment_notes") or "Under Active Treatment"
+            d["next_followup_date"] = d.get("follow_up_date") or ""
+            reports.append(d)
+        conn.close()
+        return jsonify({"success": True, "reports": reports})
+
+    data = request.json or {}
+    doctor_id = data.get("doctor_id")
+    doctor_name = data.get("doctor_name", "Dr. Anand Kulkarni").strip()
+    diagnosis = (data.get("diagnosis") or data.get("clinical_diagnosis") or "").strip()
+    medicines = (data.get("medicines") or data.get("prescribed_medicines") or "").strip()
+    treatment_notes = (data.get("treatment_notes") or data.get("doctor_notes") or data.get("treatment_status") or "").strip()
+    vitals = (data.get("vitals") or data.get("vitals_observations") or "").strip()
+    follow_up_date = (data.get("follow_up_date") or data.get("next_followup_date") or "").strip()
+
+    if not diagnosis or not medicines:
+        conn.close()
+        return jsonify({"success": False, "message": "Diagnosis and medicines prescribed are required."}), 400
+
+    cursor.execute("""
+        INSERT INTO cow_medical_reports (animal_id, doctor_id, doctor_name, diagnosis, medicines, treatment_notes, vitals, follow_up_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, (animal_id, doctor_id, doctor_name, diagnosis, medicines, treatment_notes, vitals, follow_up_date))
+    conn.commit()
+    new_id = cursor.lastrowid
+    conn.close()
+
+    return jsonify({
+        "success": True,
+        "message": "ಹಸುವಿನ ವೈದ್ಯಕೀಯ ವರದಿ ಯಶಸ್ವಿಯಾಗಿ ದಾಖಲಾಗಿದೆ (Cow medical report saved successfully)!",
+        "report_id": new_id
+    }), 201
+
+
+@app.route("/api/doctor/medical-reports", methods=["GET"])
+def get_all_medical_reports():
+    """Retrieve all cow medical reports for Doctor EHR dashboard."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT cmr.*, a.animal_name, a.tag_id, a.animal_type, a.breed,
+               u.name as owner_name, u.phone as owner_phone, u.village as owner_village
+        FROM cow_medical_reports cmr
+        JOIN animals a ON cmr.animal_id = a.id
+        JOIN users u ON a.user_id = u.id
+        ORDER BY cmr.id DESC
+    """)
+    rows = []
+    for r in cursor.fetchall():
+        d = dict(r)
+        d["clinical_diagnosis"] = d.get("diagnosis", "")
+        d["prescribed_medicines"] = d.get("medicines", "")
+        d["vitals_observations"] = d.get("vitals", "")
+        d["treatment_status"] = d.get("treatment_notes") or "Under Active Treatment"
+        d["next_followup_date"] = d.get("follow_up_date") or ""
+        rows.append(d)
+    conn.close()
+    return jsonify({"success": True, "reports": rows})
 
 
 # 7. MULTILINGUAL ASSISTANT
