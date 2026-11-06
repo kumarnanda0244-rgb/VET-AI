@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VETAI – AI Camera Livestock Disease Detection & Community Early Warning</title>
+  <meta name="description" content="VETAI: AI camera systems for dairy and beef cattle use computer vision, machine learning, and thermal or RGB imaging to monitor health and welfare parameters automatically without physical collars or transponders.">
+
+  <!-- Google Fonts: Playfair Display for headings, Inter for body text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+
+  <!-- Lucide & Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js CDN for Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-view="landing">
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- =========================================================================
+       TOP GLOBAL NAVBAR
+       ========================================================================= -->
+  <header id="main-header" class="site-header">
+    <div class="nav-container">
+      <a href="#" class="brand-logo" onclick="switchView('landing'); return false;">
+        <div class="brand-badge">
+          <i class="fa-solid fa-shield-cat"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">VET<span>AI</span></span>
+          <span class="brand-motto">Samriddh Annadata, Samriddh Bharat</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#hero" class="nav-link active">Home</a></li>
+          <li><a href="#camera-demo" class="nav-link">AI Camera & Detection</a></li>
+          <li><a href="#features" class="nav-link">Features</a></li>
+          <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+          <li><a href="#innovation" class="nav-link">Innovation</a></li>
+          <li><a href="#about" class="nav-link">About Us</a></li>
+        </ul>
+      </nav>
+
+      <!-- Right Navigation Actions -->
+      <div class="nav-actions">
+        <!-- Language Selector -->
+        <div class="lang-selector-wrap">
+          <i class="fa-solid fa-globe"></i>
+          <select id="global-lang-select" aria-label="Select Language" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+            <option value="hi">हिंदी (Hindi)</option>
+          </select>
+        </div>
+
+        <!-- Unauthenticated Buttons -->
+        <div id="nav-auth-logged-out" class="auth-buttons">
+          <button class="btn btn-outline" onclick="openAuthModal('login')">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Login
+          </button>
+          <button class="btn btn-primary" onclick="openAuthModal('register')">
+            <i class="fa-solid fa-user-plus"></i> Get Started
+          </button>
+        </div>
+
+        <!-- Authenticated Buttons -->
+        <div id="nav-auth-logged-in" class="auth-buttons" style="display: none;">
+          <button class="btn btn-primary" onclick="switchView('dashboard')">
+            <i class="fa-solid fa-gauge-high"></i> Dashboard
+          </button>
+          <div class="user-pill-dropdown">
+            <span id="nav-farmer-name" class="farmer-pill">Farmer Ramesh</span>
+            <button class="btn btn-ghost btn-sm" onclick="logoutFarmer()" title="Logout">
+              <i class="fa-solid fa-power-off"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-toggle" id="mobile-menu-btn" aria-label="Toggle navigation menu" onclick="toggleMobileMenu()">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Menu -->
+    <div id="mobile-drawer" class="mobile-drawer">
+      <ul class="mobile-nav-links">
+        <li><a href="#hero" onclick="toggleMobileMenu()">Home</a></li>
+        <li><a href="#camera-demo" onclick="toggleMobileMenu()">AI Camera & Detection</a></li>
+        <li><a href="#features" onclick="toggleMobileMenu()">Features</a></li>
+        <li><a href="#how-it-works" onclick="toggleMobileMenu()">How It Works</a></li>
+        <li><a href="#innovation" onclick="toggleMobileMenu()">Innovation (Village Warnings)</a></li>
+        <li><a href="#about" onclick="toggleMobileMenu()">About VETAI</a></li>
+      </ul>
+      <div class="mobile-actions">
+        <button class="btn btn-outline w-100 mb-2" onclick="openAuthModal('login'); toggleMobileMenu();">Login</button>
+        <button class="btn btn-primary w-100" onclick="openAuthModal('register'); toggleMobileMenu();">Get Started</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       VIEW 1: PUBLIC LANDING PAGE
+       ========================================================================= -->
+  <main id="landing-view" class="view-panel active-view">
+    
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="pulse-dot"></span>
+            Non-Invasive AI Camera Vision • No Physical Collars Required
+          </div>
+          <h1 class="hero-title">
+            Automated Livestock Healthcare <br>
+            <span class="text-accent">Powered by AI Vision.</span>
+          </h1>
+          <p class="hero-subtitle">
+            AI camera systems for dairy and beef cattle use computer vision, machine learning, and thermal or RGB imaging to monitor health and welfare parameters automatically without physical collars or transponders.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="#camera-demo" class="btn btn-primary btn-lg">
+              <i class="fa-solid fa-camera"></i> Launch Live Camera & Upload
+            </a>
+            <button class="btn btn-secondary btn-lg" onclick="demoLoginAndLaunch('assessment')">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Open Full Dashboard
+            </button>
+          </div>
+
+          <!-- Hero Trust Metrics -->
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-number">Collar-Free</span>
+              <span class="stat-label">Vision Monitoring</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-number">Thermal + RGB</span>
+              <span class="stat-label">Dual Spectrum</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-number">3 Languages</span>
+              <span class="stat-label">ಕನ್ನಡ • हिंदी • English</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-image-card">
+            <img src="https://images.unsplash.com/photo-1546445317-29f4545e9d53?auto=format&fit=crop&w=900&q=80" alt="Healthy Indian dairy cattle monitored by AI vision" class="hero-main-img" loading="eager">
+            
+            <!-- Floating Overlay Badges -->
+            <div class="floating-badge badge-top-left">
+              <i class="fa-solid fa-video text-success"></i>
+              <div>
+                <strong>Live Camera & Upload</strong>
+                <span>Instant Vision Triage</span>
+              </div>
+            </div>
+
+            <div class="floating-badge badge-bottom-right">
+              <i class="fa-solid fa-fire text-warning"></i>
+              <div>
+                <strong>Infrared Thermography</strong>
+                <span>Udder & Core Heat Detection</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive AI Camera & Disease Detection Section -->
+    <section id="camera-demo" class="section bg-alt">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">Interactive Non-Invasive Vision</span>
+          <h2 class="section-title">AI Camera Livestock Disease & Welfare System</h2>
+          <p class="section-subtitle">
+            AI camera systems for dairy and beef cattle use computer vision, machine learning, and thermal or RGB imaging to monitor health and welfare parameters automatically without physical collars or transponders.
+          </p>
+        </div>
+
+        <div class="assessment-workflow-grid">
+          <!-- Left: Input Form Panel with Dual Capture: Upload Photo & Live Camera -->
+          <div class="card assessment-form-card">
+            <form id="landing-camera-form" onsubmit="submitUnifiedAssessment(event, 'landing')">
+              
+              <!-- 1. Select Animal -->
+              <div class="form-group mb-3">
+                <label class="form-label" for="landing-animal-select">
+                  <strong>1. Select Registered Animal <span class="text-danger">*</span></strong>
+                </label>
+                <select id="landing-animal-select" class="form-control" required>
+                  <option value="1">Gauri (Gir Indigenous Cow - IN-KA-DH-0101)</option>
+                  <option value="2">Lakshmi (Murrah Buffalo - IN-KA-DH-0102)</option>
+                  <option value="3" selected>Nandi (Jamnapari Goat - IN-KA-DH-0103)</option>
+                </select>
+              </div>
+
+              <!-- 2. Dual Capture: Upload Photo AND Live Camera Stream -->
+              <div class="form-group mb-3">
+                <div class="flex-between mb-2">
+                  <label class="form-label mb-0">
+                    <strong>2. Animal Photograph & Live Camera (Collar-Free AI Vision)</strong>
+                  </label>
+                  
+                  <!-- Switch: Upload Photo vs Live Camera -->
+                  <div class="btn-group-toggle">
+                    <button type="button" id="btn-landing-mode-upload" class="btn btn-sm btn-primary" onclick="setLandingCaptureMode('upload')">
+                      <i class="fa-solid fa-cloud-arrow-up"></i> Upload Photo
+                    </button>
+                    <button type="button" id="btn-landing-mode-camera" class="btn btn-sm btn-outline" onclick="setLandingCaptureMode('camera')">
+                      <i class="fa-solid fa-video"></i> Live Camera
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Spectrum Toggle: RGB vs Thermal -->
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <small class="text-muted">OpenCV Sharpness & Thermography Active</small>
+                  <div class="btn-group-toggle">
+                    <button type="button" id="btn-landing-spectrum-rgb" class="btn btn-sm btn-secondary active" onclick="setLandingSpectrum('RGB')">
+                      🟢 RGB Spectrum
+                    </button>
+                    <button type="button" id="btn-landing-spectrum-thermal" class="btn btn-sm btn-secondary" onclick="setLandingSpectrum('Thermal')">
+                      🔥 Thermal Vision
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Mode A: Upload Photo Dropzone -->
+                <div id="landing-upload-panel">
+                  <div class="upload-dropzone" id="landing-dropzone" onclick="document.getElementById('landing-photo-input').click()">
+                    <input type="file" id="landing-photo-input" accept="image/*" class="file-input-hidden" onchange="previewLandingPhoto(event)">
+                    <div id="landing-dropzone-content">
+                      <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
+                      <p class="dropzone-prompt"><strong>Click or drag photograph here</strong></p>
+                      <small class="text-muted">Supports JPG, PNG in daylight</small>
+                    </div>
+
+                    <div id="landing-preview-wrap" class="preview-wrap" style="display: none;">
+                      <img id="landing-photo-preview" src="" alt="Animal preview" class="img-preview">
+                      <button type="button" class="btn btn-sm btn-danger remove-preview-btn" onclick="clearLandingPhoto(event)">
+                        <i class="fa-solid fa-xmark"></i> Remove Photo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mode B: Live Camera Viewfinder & Snapshot -->
+                <div id="landing-camera-panel" style="display: none;">
+                  <div class="viewfinder-screen-wrap" id="landing-viewfinder-wrap">
+                    <video id="landing-live-video" autoplay playsinline class="viewfinder-media" style="display: none;"></video>
+                    <canvas id="landing-live-canvas" style="display: none;"></canvas>
+                    <img id="landing-camera-snapshot-preview" src="" alt="Snapshot preview" class="viewfinder-media" style="display: none;">
+                    
+                    <div id="landing-camera-standby" class="viewfinder-placeholder">
+                      <i class="fa-solid fa-camera fa-2x text-muted mb-2"></i>
+                      <h5>Live Camera Ready</h5>
+                      <p class="text-xs text-muted mb-0">Aim webcam or mobile camera at cattle without physical collars</p>
+                    </div>
+
+                    <div class="hud-reticle-overlay">
+                      <div class="reticle-corner top-left"></div>
+                      <div class="reticle-corner top-right"></div>
+                      <div class="reticle-corner bottom-left"></div>
+                      <div class="reticle-corner bottom-right"></div>
+                      <div class="hud-live-tag" id="landing-hud-tag">STANDBY</div>
+                    </div>
+                  </div>
+
+                  <!-- Live Camera Controls -->
+                  <div class="d-flex gap-2 mt-2">
+                    <button type="button" id="btn-landing-cam-start" class="btn btn-primary btn-sm flex-1" onclick="startLandingLiveCamera()">
+                      <i class="fa-solid fa-video"></i> Start Live Camera
+                    </button>
+                    <button type="button" id="btn-landing-cam-capture" class="btn btn-warning btn-sm flex-1" onclick="captureLandingLiveSnapshot()" style="display: none;">
+                      <i class="fa-solid fa-camera"></i> Capture Snapshot
+                    </button>
+                    <button type="button" id="btn-landing-cam-flip" class="btn btn-outline btn-sm" onclick="flipLandingLiveCamera()" style="display: none;">
+                      <i class="fa-solid fa-arrows-rotate"></i> Flip Camera
+                    </button>
+                    <button type="button" id="btn-landing-cam-stop" class="btn btn-ghost btn-sm text-danger" onclick="stopLandingLiveCamera()" style="display: none;">
+                      <i class="fa-solid fa-stop"></i> Stop
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Observable Symptoms -->
+              <div class="form-group mb-3">
+                <label class="form-label">
+                  <strong>3. Observable Symptoms * <small class="text-muted">(Select all that apply)</small></strong>
+                </label>
+
+                <div class="symptoms-checkbox-grid">
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Fever"> <span><i class="fa-solid fa-temperature-high"></i> Fever</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Loss of appetite"> <span><i class="fa-solid fa-bowl-food"></i> Loss of Appetite</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Weakness"> <span><i class="fa-solid fa-battery-quarter"></i> Weakness</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Reduced milk production"> <span><i class="fa-solid fa-droplet"></i> Reduced Milk</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Diarrhoea"> <span><i class="fa-solid fa-water"></i> Diarrhoea</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Coughing"> <span><i class="fa-solid fa-head-side-cough"></i> Coughing</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Abnormal breathing"> <span><i class="fa-solid fa-lungs"></i> Abnormal Breathing</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Reduced activity"> <span><i class="fa-solid fa-bed"></i> Reduced Activity</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Unusual movement"> <span><i class="fa-solid fa-person-walking-with-cane"></i> Limping / Gait Arch</span></label>
+                  <label class="symptom-chip"><input type="checkbox" name="landing_symptoms" value="Cutaneous Nodules"> <span><i class="fa-solid fa-circle-dot"></i> Skin Nodules / Lumps</span></label>
+                </div>
+              </div>
+
+              <div class="form-row mb-3">
+                <div class="col-6">
+                  <label class="form-label" for="landing-duration"><strong>Duration</strong></label>
+                  <select id="landing-duration" class="form-control">
+                    <option value="Less than 24 hours">Less than 24 hours</option>
+                    <option value="1 Day" selected>1 Day</option>
+                    <option value="2-3 Days">2-3 Days</option>
+                    <option value="3-5 Days">3-5 Days</option>
+                  </select>
+                </div>
+
+                <div class="col-6">
+                  <label class="form-label" for="landing-severity"><strong>Severity</strong></label>
+                  <select id="landing-severity" class="form-control">
+                    <option value="Mild">Mild</option>
+                    <option value="Moderate" selected>Moderate</option>
+                    <option value="Severe">Severe</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" id="landing-submit-btn" class="btn btn-primary btn-lg w-100">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Run AI Disease & Welfare Detection
+              </button>
+            </form>
+          </div>
+
+          <!-- Right: Real-Time Parameter HUD Results Panel -->
+          <div class="card assessment-result-card" id="landing-result-panel">
+            <div class="result-placeholder" id="landing-placeholder">
+              <i class="fa-solid fa-microscope placeholder-icon"></i>
+              <h4>Assessment Output Ready</h4>
+              <p class="text-muted text-sm">
+                Capture a live camera snapshot or upload a photograph and select observed indicators to generate instant computer vision detection.
+              </p>
+              <div class="triage-legend">
+                <span class="legend-badge bg-green">GREEN: Low Concern</span>
+                <span class="legend-badge bg-yellow">YELLOW: Mild Concern</span>
+                <span class="legend-badge bg-orange">ORANGE: Significant Concern</span>
+                <span class="legend-badge bg-red">RED: Potential Emergency</span>
+              </div>
+            </div>
+
+            <!-- Injected Live Results Container -->
+            <div id="landing-live-result" style="display: none;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Features Section (6 Cards) -->
+    <section id="features" class="section features-section">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">Next-Gen Agritech</span>
+          <h2 class="section-title">Collar-Free Automated Cattle Monitoring</h2>
+          <p class="section-subtitle">
+            AI camera systems for dairy and beef cattle use computer vision, machine learning, and thermal or RGB imaging to monitor health and welfare parameters automatically without physical collars or transponders.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon bg-light-green">
+              <i class="fa-solid fa-camera-viewfinder"></i>
+            </div>
+            <h3 class="feature-heading">1. Live Camera & Upload</h3>
+            <p class="feature-desc">
+              Inspect cattle using a live webcam / smartphone camera stream or upload high-resolution photographs for instant computer vision processing.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon bg-light-green">
+              <i class="fa-solid fa-fire"></i>
+            </div>
+            <h3 class="feature-heading">2. RGB & Thermal Vision</h3>
+            <p class="feature-desc">
+              Dual-spectrum imaging identifies localized inflammation, superficial muzzle temperature, and early subclinical mastitis heat signatures.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon bg-light-green">
+              <i class="fa-solid fa-virus-covid"></i>
+            </div>
+            <h3 class="feature-heading">3. Disease Detection</h3>
+            <p class="feature-desc">
+              Automated pattern detection for Lumpy Skin Disease (nodules), FMD (mucosal drool), Mastitis, Bovine Respiratory Disease, and Pinkeye.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon bg-light-green">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="feature-heading">4. Emergency Priority Alerts</h3>
+            <p class="feature-desc">
+              Color-coded 4-tier triage (Green, Yellow, Orange, Red) automatically flags acute complications like respiratory collapse for rapid escalation.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon bg-light-green">
+              <i class="fa-solid fa-user-doctor"></i>
+            </div>
+            <h3 class="feature-heading">5. Veterinary Assistance</h3>
+            <p class="feature-desc">
+              Connect directly with verified local veterinary dispensaries and mobile clinics. Transmit structured AI camera findings with a single tap.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon bg-light-green">
+              <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <h3 class="feature-heading">6. Community Disease Intelligence</h3>
+            <p class="feature-desc">
+              Anonymized symptom reports and camera findings are aggregated at the village level to detect early outbreak clusters before widespread herd mortality occurs.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works (6 Steps) -->
+    <section id="how-it-works" class="section how-it-works-section bg-alt">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">Step-by-Step Guidance</span>
+          <h2 class="section-title">How VETAI Protects Your Livestock</h2>
+          <p class="section-subtitle">
+            A seamless six-step workflow built for ease of use in rural farm environments.
+          </p>
+        </div>
+
+        <div class="steps-flow">
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <h4 class="step-title">Register Your Animal</h4>
+            <p class="step-text">Add your cow, buffalo, goat or sheep with unique ear-tag ID, breed, and age profile.</p>
+          </div>
+          <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <h4 class="step-title">Open Camera or Upload</h4>
+            <p class="step-text">Aim your live phone camera or upload a clear animal photograph without physical collars.</p>
+          </div>
+          <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <h4 class="step-title">Select Vision Mode</h4>
+            <p class="step-text">Toggle between RGB visual spectrum and Infrared Thermal thermography heat mapping.</p>
+          </div>
+          <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="step-card">
+            <div class="step-number">04</div>
+            <h4 class="step-title">Receive AI Detection</h4>
+            <p class="step-text">Get automated BCS (1-5), lameness index, respiration rate, and disease classifications.</p>
+          </div>
+          <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="step-card">
+            <div class="step-number">05</div>
+            <h4 class="step-title">Contact a Veterinarian</h4>
+            <p class="step-text">Share the digital vision report with your local taluk veterinary doctor if flags appear.</p>
+          </div>
+          <div class="step-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+
+          <div class="step-card">
+            <div class="step-number">06</div>
+            <h4 class="step-title">Protect Village Herds</h4>
+            <p class="step-text">Early detections feed into the village radar to halt community spread before it starts.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Innovation Section: Community Disease Early Warning System -->
+    <section id="innovation" class="section innovation-section">
+      <div class="section-container">
+        <div class="innovation-grid">
+          <div class="innovation-content">
+            <span class="section-tag tag-primary">Main Innovation</span>
+            <h2 class="section-title">
+              Beyond Individual Monitoring.<br>
+              <span class="text-accent">Towards Community Protection.</span>
+            </h2>
+            <p class="section-subtitle">
+              Individual treatment comes too late when contagious diseases sweep through a village. VETAI’s Village-Level Disease Early Warning System detects hidden patterns before an outbreak can devastate local livelihoods.
+            </p>
+
+            <div class="workflow-box">
+              <h4 class="workflow-title"><i class="fa-solid fa-diagram-project"></i> Early Warning Detection Pipeline:</h4>
+              <div class="workflow-chain">
+                <span class="wf-node">Farmer Reports</span>
+                <span class="wf-sep">→</span>
+                <span class="wf-node">Community Analysis</span>
+                <span class="wf-sep">→</span>
+                <span class="wf-node">Pattern Detection</span>
+                <span class="wf-sep">→</span>
+                <span class="wf-node warning-node">Possible Cluster Warning</span>
+                <span class="wf-sep">→</span>
+                <span class="wf-node">Veterinary Investigation</span>
+              </div>
+            </div>
+
+            <div class="innovation-features-list">
+              <div class="inno-item">
+                <i class="fa-solid fa-user-shield text-primary"></i>
+                <div>
+                  <strong>Complete Anonymity:</strong>
+                  <span>Farmer names and phone numbers are never shared in community alerts; only village name and clinical indicators.</span>
+                </div>
+              </div>
+              <div class="inno-item">
+                <i class="fa-solid fa-magnifying-glass-chart text-primary"></i>
+                <div>
+                  <strong>Intelligent Symptom Clustering:</strong>
+                  <span>Detects multiple concurrent cases of blister lesions, acute respiratory distress, or severe diarrheal scours.</span>
+                </div>
+              </div>
+              <div class="inno-item">
+                <i class="fa-solid fa-bullhorn text-warning"></i>
+                <div>
+                  <strong>Proactive Quarantine & Ring Vaccination:</strong>
+                  <span>Enables veterinary officers to intervene within 24 hours of the first micro-cluster.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button class="btn btn-primary" onclick="demoLoginAndLaunch('community')">
+                <i class="fa-solid fa-radar"></i> View Live Village Warning Radar
+              </button>
+            </div>
+          </div>
+
+          <div class="innovation-visual">
+            <div class="village-radar-card">
+              <div class="radar-card-header">
+                <div class="radar-live-badge">
+                  <span class="pulse-dot"></span> LIVE VILLAGE MONITORING
+                </div>
+                <span class="text-muted text-sm">Real-time SQLite Pattern Engine</span>
+              </div>
+
+              <div class="village-map-mockup">
+                <div class="village-cluster-box active-cluster">
+                  <div class="cluster-header">
+                    <span class="cluster-village"><i class="fa-solid fa-location-dot"></i> Shivapura Village</span>
+                    <span class="badge badge-warning">High Alert Cluster</span>
+                  </div>
+                  <div class="cluster-body">
+                    <p class="cluster-text"><strong>5 Cases</strong> reported across 3 days (Cattle & Buffalo)</p>
+                    <div class="cluster-tags">
+                      <span class="mini-tag">High Fever</span>
+                      <span class="mini-tag">Coughing</span>
+                      <span class="mini-tag">Abnormal Breathing</span>
+                    </div>
+                    <div class="cluster-action-note">
+                      <i class="fa-solid fa-circle-exclamation"></i>
+                      <span>Possible Livestock Health Cluster Warning – Veterinary Verification Recommended.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="village-cluster-box healthy-cluster">
+                  <div class="cluster-header">
+                    <span class="cluster-village"><i class="fa-solid fa-location-dot"></i> Navalgund Village</span>
+                    <span class="badge badge-success">Baseline Normal</span>
+                  </div>
+                  <p class="cluster-text mb-0">1 isolated report (Mild Diarrhoea). No statistical anomaly detected.</p>
+                </div>
+              </div>
+
+              <div class="radar-footer">
+                <small class="text-muted"><i class="fa-solid fa-shield-halved"></i> Data aggregated from anonymized farmer reports. Real-time scanning active.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About & Impact Section -->
+    <section id="about" class="section about-section">
+      <div class="section-container">
+        <div class="section-header text-center">
+          <span class="section-tag">About VETAI</span>
+          <h2 class="section-title">Rooted in India's Agrarian Prosperity</h2>
+          <p class="section-subtitle">
+            Under the national theme of <em>Samriddh Annadata, Samriddh Bharat</em>, VETAI bridges the crucial gap between remote cattle sheds and qualified veterinary science.
+          </p>
+        </div>
+
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="impact-icon"><i class="fa-solid fa-bell"></i></div>
+            <h4>Early Health-Risk Awareness</h4>
+            <p>Empowers farmers to spot subtle biological indicators before conditions become critical or irreversible.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon"><i class="fa-solid fa-eye"></i></div>
+            <h4>Collar-Free Vision Monitoring</h4>
+            <p>Monitors health and welfare parameters automatically without costly physical neck collars or RFID transponders.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon"><i class="fa-solid fa-truck-medical"></i></div>
+            <h4>Faster Veterinary Coordination</h4>
+            <p>Provides visiting veterinarians with structured clinical logs rather than vague recollections.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+            <h4>Improved Animal Welfare</h4>
+            <p>Promotes compassionate, science-backed livestock husbandry and humane convalescent care.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon"><i class="fa-solid fa-people-group"></i></div>
+            <h4>Community-Level Disease Awareness</h4>
+            <p>Alerts entire gram panchayats to halt shared grazing when contagious pathogens emerge.</p>
+          </div>
+
+          <div class="impact-card">
+            <div class="impact-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <h4>Reduced Avoidable Losses</h4>
+            <p>Shields smallholder families from sudden catastrophic livestock asset destruction.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Public Footer -->
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-col brand-col">
+          <div class="footer-logo">
+            <i class="fa-solid fa-shield-cat"></i>
+            <span>VETAI</span>
+          </div>
+          <p class="footer-motto">Samriddh Annadata, Samriddh Bharat</p>
+          <p class="footer-desc">
+            An AI-powered public livestock healthcare platform dedicated to empowering dairy farmers, rural livestock keepers, and veterinary professionals across India.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-heading">Features</h4>
+          <ul class="footer-links">
+            <li><a href="#camera-demo">AI Camera Detection</a></li>
+            <li><a href="#camera-demo">Live Camera & Photo Upload</a></li>
+            <li><a href="#camera-demo">Thermal & RGB Vision</a></li>
+            <li><a href="#features">Emergency Priority Triage</a></li>
+            <li><a href="#features">Vaccination Reminders</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-heading">Innovation & Community</h4>
+          <ul class="footer-links">
+            <li><a href="#innovation">Village Outbreak Radar</a></li>
+            <li><a href="#innovation">Pattern Clustering Engine</a></li>
+            <li><a href="#how-it-works">Veterinary Directory</a></li>
+            <li><a href="#about">Farmer Welfare Mission</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-heading">Emergency & Contact</h4>
+          <p class="text-sm text-muted mb-2">National Livestock Helpline: <strong>1962</strong></p>
+          <p class="text-sm text-muted mb-2">Email: <strong>support@vetai.org</strong></p>
+          <p class="text-sm text-muted">Technical Support: 24/7 Available</p>
+        </div>
+      </div>
+
+      <div class="footer-disclaimer-bar">
+        <div class="disclaimer-content">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>
+            <strong>Official Medical Disclaimer:</strong> VETAI provides preliminary decision-support information and is not a confirmed veterinary diagnosis. Consult a qualified veterinarian for clinical examination and prescription treatment.
+          </span>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 VETAI. Built under the national theme: <em>Samriddh Annadata, Samriddh Bharat</em>. All rights reserved.</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- =========================================================================
+       VIEW 2: FARMER DASHBOARD (AUTHENTICATED)
+       ========================================================================= -->
+  <div id="dashboard-view" class="view-panel dashboard-layout" style="display: none;">
+    
+    <!-- Dashboard Sidebar -->
+    <aside class="dashboard-sidebar" id="dashboard-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <div class="brand-badge"><i class="fa-solid fa-shield-cat"></i></div>
+          <div class="brand-text">
+            <span class="brand-title">VET<span>AI</span></span>
+            <span class="brand-motto text-xs">Annadata Portal</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group-title">MAIN NAVIGATION</div>
+        <ul class="sidebar-menu">
+          <li>
+            <button class="nav-item active" onclick="switchDashboardTab('overview')">
+              <i class="fa-solid fa-chart-pie"></i> <span>Dashboard Overview</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item inno-highlight" onclick="switchDashboardTab('assessment')">
+              <i class="fa-solid fa-camera-viewfinder"></i> <span>AI Camera & Symptoms</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" onclick="switchDashboardTab('animals')">
+              <i class="fa-solid fa-cow"></i> <span>My Animals</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" onclick="switchDashboardTab('reminders')">
+              <i class="fa-solid fa-syringe"></i> <span>Vaccine & Reminders</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" onclick="switchDashboardTab('veterinary')">
+              <i class="fa-solid fa-user-doctor"></i> <span>Veterinary Assistance</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item inno-highlight" onclick="switchDashboardTab('community')">
+              <i class="fa-solid fa-shield-virus"></i> <span>Village Early Warning</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" onclick="switchDashboardTab('assistant')">
+              <i class="fa-solid fa-headset"></i> <span>Multilingual Assistant</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="farmer-profile-mini">
+          <div class="profile-avatar"><i class="fa-solid fa-user-check"></i></div>
+          <div class="profile-meta">
+            <strong id="sidebar-user-name">Ramesh Patel</strong>
+            <small id="sidebar-user-village">Shivapura, Dharwad</small>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm w-100 text-danger" onclick="logoutFarmer()">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Dashboard Main Content Wrapper -->
+    <div class="dashboard-main-content">
+      
+      <!-- Dashboard Top Header Bar -->
+      <header class="dash-topbar">
+        <div class="dash-topbar-left">
+          <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+          <div class="dash-title-wrap">
+            <h2 id="dash-active-title" class="dash-page-title">Dashboard Overview</h2>
+            <span class="dash-date text-muted" id="dash-live-date">Today</span>
+          </div>
+        </div>
+
+        <div class="dash-topbar-right">
+          <div id="dash-cluster-alert-indicator" class="alert-indicator-pill" onclick="switchDashboardTab('community')" title="Click to view village warnings">
+            <span class="pulse-dot"></span>
+            <span id="cluster-pill-text">1 Village Warning Active</span>
+          </div>
+
+          <button class="btn btn-primary btn-sm" onclick="switchDashboardTab('assessment')">
+            <i class="fa-solid fa-camera"></i> Live AI Scan
+          </button>
+
+          <button class="btn btn-outline btn-sm" onclick="openAddAnimalModal()">
+            <i class="fa-solid fa-plus"></i> Register Animal
+          </button>
+
+          <button class="btn btn-outline btn-sm" onclick="switchView('landing')">
+            <i class="fa-solid fa-globe"></i> Website
+          </button>
+        </div>
+      </header>
+
+      <!-- Dashboard Inner Body -->
+      <div class="dash-body-scroll">
+
+        <!-- ===================================================================
+             TAB 1: DASHBOARD OVERVIEW
+             =================================================================== -->
+        <section id="tab-overview" class="dash-tab active-tab">
+          
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon bg-light-green text-primary"><i class="fa-solid fa-cow"></i></div>
+              <div class="metric-info">
+                <span class="metric-label">Total Animals</span>
+                <h3 class="metric-val" id="metric-total-animals">3</h3>
+                <small class="text-success"><i class="fa-solid fa-circle-check"></i> Registered in Herd</small>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon bg-success-light text-success"><i class="fa-solid fa-heart"></i></div>
+              <div class="metric-info">
+                <span class="metric-label">Healthy Animals</span>
+                <h3 class="metric-val text-success" id="metric-healthy-animals">2</h3>
+                <small class="text-muted">Low Concern (Green)</small>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon bg-warning-light text-warning"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="metric-info">
+                <span class="metric-label">Requiring Attention</span>
+                <h3 class="metric-val text-warning" id="metric-attention-animals">1</h3>
+                <small class="text-muted">Observation Advised</small>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon bg-danger-light text-danger"><i class="fa-solid fa-bell"></i></div>
+              <div class="metric-info">
+                <span class="metric-label">Emergency Alerts</span>
+                <h3 class="metric-val text-danger" id="metric-emergency-animals">0</h3>
+                <small class="text-muted">Immediate Vet Action</small>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon bg-blue-light text-blue"><i class="fa-solid fa-syringe"></i></div>
+              <div class="metric-info">
+                <span class="metric-label">Upcoming Reminders</span>
+                <h3 class="metric-val" id="metric-upcoming-reminders">2</h3>
+                <small class="text-muted">Vaccinations Due</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Bar -->
+          <div class="quick-actions-card">
+            <h4 class="quick-actions-title"><i class="fa-solid fa-bolt"></i> Quick Farm Operations</h4>
+            <div class="quick-action-btns">
+              <button class="btn btn-primary" onclick="switchDashboardTab('assessment')">
+                <i class="fa-solid fa-camera-viewfinder"></i> Launch AI Camera & Detection
+              </button>
+              <button class="btn btn-outline" onclick="openAddAnimalModal()">
+                <i class="fa-solid fa-plus-circle"></i> Register Animal
+              </button>
+              <button class="btn btn-outline" onclick="switchDashboardTab('veterinary')">
+                <i class="fa-solid fa-user-doctor"></i> Find Veterinary Assistance
+              </button>
+            </div>
+          </div>
+
+          <!-- Community Warning Banner -->
+          <div id="overview-cluster-banner" class="cluster-banner-alert" style="display: none;">
+            <div class="banner-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="banner-body">
+              <h4 id="overview-cluster-title">Possible Livestock Health Cluster Warning – Veterinary Verification Recommended</h4>
+              <p id="overview-cluster-desc" class="mb-0">Cluster detected in your village. Please observe herd isolation.</p>
+            </div>
+            <button class="btn btn-warning btn-sm" onclick="switchDashboardTab('community')">Inspect Cluster Details</button>
+          </div>
+
+          <!-- Charts Section -->
+          <div class="dash-charts-row">
+            <div class="card chart-card">
+              <div class="card-header">
+                <h4 class="card-title"><i class="fa-solid fa-chart-pie"></i> Herd Health Category Distribution</h4>
+              </div>
+              <div class="card-body">
+                <div class="chart-container" style="position: relative; height: 260px;">
+                  <canvas id="healthStatusChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="card chart-card">
+              <div class="card-header">
+                <h4 class="card-title"><i class="fa-solid fa-chart-column"></i> Common Symptom Frequency</h4>
+              </div>
+              <div class="card-body">
+                <div class="chart-container" style="position: relative; height: 260px;">
+                  <canvas id="symptomsTrendChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Health Assessments & Upcoming Reminders -->
+          <div class="dash-two-col-row">
+            <div class="card table-card">
+              <div class="card-header flex-between">
+                <h4 class="card-title"><i class="fa-solid fa-notes-medical"></i> Recent AI Health & Vision Screenings</h4>
+                <button class="btn btn-ghost btn-sm" onclick="switchDashboardTab('assessment')">Conduct Assessment</button>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Animal</th>
+                        <th>Reported Symptoms</th>
+                        <th>Risk Priority</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="overview-assessments-tbody">
+                      <tr><td colspan="5" class="text-center py-4 text-muted">Loading assessments...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="card table-card">
+              <div class="card-header flex-between">
+                <h4 class="card-title"><i class="fa-solid fa-bell"></i> Upcoming Health & Vaccine Reminders</h4>
+                <button class="btn btn-ghost btn-sm" onclick="switchDashboardTab('reminders')">Manage</button>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Due Date</th>
+                        <th>Type</th>
+                        <th>Title / Vaccine</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="overview-reminders-tbody">
+                      <tr><td colspan="4" class="text-center py-4 text-muted">Loading reminders...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             TAB 2: AI CAMERA & SYMPTOM ASSESSMENT (DUAL CAPTURE)
+             =================================================================== -->
+        <section id="tab-assessment" class="dash-tab">
+          <div class="tab-header-row flex-between">
+            <div>
+              <h3 class="tab-title">
+                <i class="fa-solid fa-camera-viewfinder text-primary"></i>
+                AI Camera Livestock Disease & Welfare Detection
+              </h3>
+              <p class="tab-subtitle">
+                AI camera systems for dairy and beef cattle use computer vision, machine learning, and thermal or RGB imaging to monitor health and welfare parameters automatically without physical collars or transponders.
+              </p>
+            </div>
+            <div class="d-flex gap-2">
+              <span class="badge badge-success"><i class="fa-solid fa-check-circle"></i> Collar-Free Vision</span>
+              <span class="badge badge-outline"><i class="fa-solid fa-fire"></i> Infrared Thermography</span>
+            </div>
+          </div>
+
+          <div class="assessment-workflow-grid">
+            <!-- Left Form Panel with Dual Capture: Upload Photo & Live Camera -->
+            <div class="card assessment-form-card">
+              <form id="dash-assessment-form" onsubmit="submitUnifiedAssessment(event, 'dash')">
+                
+                <!-- 1. Select Registered Animal -->
+                <div class="form-group mb-3">
+                  <label class="form-label" for="assess-animal-select">
+                    <strong>1. Select Registered Animal <span class="text-danger">*</span></strong>
+                  </label>
+                  <select id="assess-animal-select" class="form-control" required>
+                    <option value="">-- Choose an animal --</option>
+                  </select>
+                </div>
+
+                <!-- 2. Dual Capture: Upload Photo AND Live Camera Stream -->
+                <div class="form-group mb-3">
+                  <div class="flex-between mb-2">
+                    <label class="form-label mb-0">
+                      <strong>2. Animal Photograph & Live Camera (Collar-Free AI Vision)</strong>
+                    </label>
+
+                    <!-- Toggle: Upload Photo vs Live Camera -->
+                    <div class="btn-group-toggle">
+                      <button type="button" id="btn-dash-mode-upload" class="btn btn-sm btn-primary" onclick="setDashCaptureMode('upload')">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Photo
+                      </button>
+                      <button type="button" id="btn-dash-mode-camera" class="btn btn-sm btn-outline" onclick="setDashCaptureMode('camera')">
+                        <i class="fa-solid fa-video"></i> Live Camera
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Spectrum Toggle: RGB vs Thermal -->
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <small class="text-muted">OpenCV Sharpness & Thermography Active</small>
+                    <div class="btn-group-toggle">
+                      <button type="button" id="btn-dash-spectrum-rgb" class="btn btn-sm btn-secondary active" onclick="setDashSpectrum('RGB')">
+                        🟢 RGB Spectrum
+                      </button>
+                      <button type="button" id="btn-dash-spectrum-thermal" class="btn btn-sm btn-secondary" onclick="setDashSpectrum('Thermal')">
+                        🔥 Thermal Vision
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Mode A: Upload Photo Dropzone -->
+                  <div id="dash-upload-panel">
+                    <div class="upload-dropzone" id="assess-dropzone" onclick="document.getElementById('assess-photo-input').click()">
+                      <input type="file" id="assess-photo-input" accept="image/*" class="file-input-hidden" onchange="previewAssessmentPhoto(event)">
+                      <div id="assess-dropzone-content">
+                        <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
+                        <p class="dropzone-prompt"><strong>Click or drag photograph here</strong></p>
+                        <small class="text-muted">Supports JPG, PNG in daylight</small>
+                      </div>
+
+                      <div id="assess-preview-wrap" class="preview-wrap" style="display: none;">
+                        <img id="assess-photo-preview" src="" alt="Animal preview" class="img-preview">
+                        <button type="button" class="btn btn-sm btn-danger remove-preview-btn" onclick="clearAssessmentPhoto(event)">
+                          <i class="fa-solid fa-xmark"></i> Remove Photo
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Mode B: Live Camera Viewfinder & Stream -->
+                  <div id="dash-camera-panel" style="display: none;">
+                    <div class="viewfinder-screen-wrap" id="dash-viewfinder-wrap">
+                      <video id="dash-live-video" autoplay playsinline class="viewfinder-media" style="display: none;"></video>
+                      <canvas id="dash-live-canvas" style="display: none;"></canvas>
+                      <img id="dash-camera-snapshot-preview" src="" alt="Snapshot preview" class="viewfinder-media" style="display: none;">
+                      
+                      <div id="dash-camera-standby" class="viewfinder-placeholder">
+                        <i class="fa-solid fa-camera fa-2x text-muted mb-2"></i>
+                        <h5>Live Camera Ready</h5>
+                        <p class="text-xs text-muted mb-0">Aim webcam or mobile camera at cattle without physical collars</p>
+                      </div>
+
+                      <div class="hud-reticle-overlay">
+                        <div class="reticle-corner top-left"></div>
+                        <div class="reticle-corner top-right"></div>
+                        <div class="reticle-corner bottom-left"></div>
+                        <div class="reticle-corner bottom-right"></div>
+                        <div class="hud-live-tag" id="dash-hud-tag">STANDBY</div>
+                      </div>
+                    </div>
+
+                    <!-- Live Camera Controls -->
+                    <div class="d-flex gap-2 mt-2">
+                      <button type="button" id="btn-dash-cam-start" class="btn btn-primary btn-sm flex-1" onclick="startDashLiveCamera()">
+                        <i class="fa-solid fa-video"></i> Start Live Camera
+                      </button>
+                      <button type="button" id="btn-dash-cam-capture" class="btn btn-warning btn-sm flex-1" onclick="captureDashLiveSnapshot()" style="display: none;">
+                        <i class="fa-solid fa-camera"></i> Capture Snapshot
+                      </button>
+                      <button type="button" id="btn-dash-cam-flip" class="btn btn-outline btn-sm" onclick="flipDashLiveCamera()" style="display: none;">
+                        <i class="fa-solid fa-arrows-rotate"></i> Flip Camera
+                      </button>
+                      <button type="button" id="btn-dash-cam-stop" class="btn btn-ghost btn-sm text-danger" onclick="stopDashLiveCamera()" style="display: none;">
+                        <i class="fa-solid fa-stop"></i> Stop
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Observable Symptoms -->
+                <div class="form-group mb-3">
+                  <label class="form-label">
+                    <strong>3. Observable Symptoms * <small class="text-muted">(Select all that apply)</small></strong>
+                  </label>
+
+                  <div class="symptoms-checkbox-grid">
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Fever"> <span><i class="fa-solid fa-temperature-high"></i> Fever</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Loss of appetite"> <span><i class="fa-solid fa-bowl-food"></i> Loss of Appetite</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Weakness"> <span><i class="fa-solid fa-battery-quarter"></i> Weakness</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Reduced milk production"> <span><i class="fa-solid fa-droplet"></i> Reduced Milk</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Diarrhoea"> <span><i class="fa-solid fa-water"></i> Diarrhoea</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Coughing"> <span><i class="fa-solid fa-head-side-cough"></i> Coughing</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Abnormal breathing"> <span><i class="fa-solid fa-lungs"></i> Abnormal Breathing</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Reduced activity"> <span><i class="fa-solid fa-bed"></i> Reduced Activity</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Unusual movement"> <span><i class="fa-solid fa-person-walking-with-cane"></i> Limping / Gait Arch</span></label>
+                    <label class="symptom-chip"><input type="checkbox" name="symptoms" value="Cutaneous Nodules"> <span><i class="fa-solid fa-circle-dot"></i> Skin Nodules / Lumps</span></label>
+                  </div>
+                </div>
+
+                <div class="form-row mb-3">
+                  <div class="col-6">
+                    <label class="form-label" for="assess-duration"><strong>Duration</strong></label>
+                    <select id="assess-duration" class="form-control">
+                      <option value="Less than 24 hours">Less than 24 hours</option>
+                      <option value="1 Day" selected>1 Day</option>
+                      <option value="2-3 Days">2-3 Days</option>
+                      <option value="3-5 Days">3-5 Days</option>
+                    </select>
+                  </div>
+
+                  <div class="col-6">
+                    <label class="form-label" for="assess-severity"><strong>Severity</strong></label>
+                    <select id="assess-severity" class="form-control">
+                      <option value="Mild">Mild</option>
+                      <option value="Moderate" selected>Moderate</option>
+                      <option value="Severe">Severe</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group mb-4">
+                  <label class="form-label" for="assess-notes"><strong>Additional Clinical Observations (Optional)</strong></label>
+                  <textarea id="assess-notes" class="form-control" rows="2" placeholder="Describe any nasal discharge, salivation, or environmental factors..."></textarea>
+                </div>
+
+                <button type="submit" id="submit-assessment-btn" class="btn btn-primary btn-lg w-100">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> Run AI Disease & Welfare Detection
+                </button>
+              </form>
+            </div>
+
+            <!-- Right Results Panel -->
+            <div class="card assessment-result-card" id="assessment-result-panel">
+              <div class="result-placeholder" id="assessment-placeholder">
+                <i class="fa-solid fa-microscope placeholder-icon"></i>
+                <h4>Assessment Output Ready</h4>
+                <p class="text-muted text-sm">
+                  Complete the form on the left using live camera snapshot or photo upload to generate an explainable clinical evaluation and automated disease screening.
+                </p>
+                <div class="triage-legend">
+                  <span class="legend-badge bg-green">GREEN: Low Concern</span>
+                  <span class="legend-badge bg-yellow">YELLOW: Mild Concern</span>
+                  <span class="legend-badge bg-orange">ORANGE: Significant Concern</span>
+                  <span class="legend-badge bg-red">RED: Potential Emergency</span>
+                </div>
+              </div>
+
+              <!-- Live Assessment Output -->
+              <div id="assessment-live-result" style="display: none;"></div>
+            </div>
+          </div>
+
+          <!-- Historical AI Camera Scans Table -->
+          <div class="card mt-4">
+            <div class="card-header flex-between">
+              <h4 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent AI Camera Vision & Health Logs</h4>
+              <span class="badge badge-outline">Continuous Welfare Ledger</span>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Animal</th>
+                      <th>BCS (1-5)</th>
+                      <th>Locomotion / Lameness</th>
+                      <th>Surface Temp</th>
+                      <th>Welfare Index</th>
+                      <th>Detected Disease Flags</th>
+                      <th>Priority</th>
+                    </tr>
+                  </thead>
+                  <tbody id="camera-screenings-tbody">
+                    <tr><td colspan="8" class="text-center py-4 text-muted">Loading vision scan history...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             TAB 3: MY ANIMALS
+             =================================================================== -->
+        <section id="tab-animals" class="dash-tab">
+          <div class="tab-header-row">
+            <div>
+              <h3 class="tab-title">Registered Livestock Flock</h3>
+              <p class="tab-subtitle">Manage individual animal identities, age, lactation records and digital profiles.</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddAnimalModal()">
+              <i class="fa-solid fa-plus"></i> Register New Animal
+            </button>
+          </div>
+
+          <div class="animals-cards-grid" id="animals-cards-container">
+            <!-- Dynamic animal profile cards -->
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             TAB 4: VACCINATION & HEALTH REMINDERS
+             =================================================================== -->
+        <section id="tab-reminders" class="dash-tab">
+          <div class="tab-header-row flex-between">
+            <div>
+              <h3 class="tab-title">Vaccination & Preventative Health Reminders</h3>
+              <p class="tab-subtitle">Schedule FMD, HS, BQ immunizations and routine veterinary follow-ups.</p>
+            </div>
+            <button class="btn btn-primary" onclick="openAddReminderModal()">
+              <i class="fa-solid fa-plus"></i> Add New Reminder
+            </button>
+          </div>
+
+          <div class="card p-0">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Due Date</th>
+                    <th>Animal</th>
+                    <th>Reminder Type</th>
+                    <th>Title & Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="reminders-table-tbody">
+                  <tr><td colspan="6" class="text-center py-4 text-muted">Loading reminders...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             TAB 5: VETERINARY ASSISTANCE
+             =================================================================== -->
+        <section id="tab-veterinary" class="dash-tab">
+          <div class="tab-header-row flex-between">
+            <div>
+              <h3 class="tab-title">Veterinary Assistance & Consultation</h3>
+              <p class="tab-subtitle">Connect with registered government veterinary hospitals and mobile animal healthcare dispensaries.</p>
+            </div>
+            <div class="d-flex gap-2">
+              <input type="text" id="vet-district-filter" class="form-control" placeholder="Search District (e.g. Dharwad)" style="width: 200px;">
+              <button class="btn btn-outline" onclick="filterVets()">Filter</button>
+              <button class="btn btn-primary" onclick="openConsultationModal()">
+                <i class="fa-solid fa-paper-plane"></i> Request Consultation
+              </button>
+            </div>
+          </div>
+
+          <div class="vets-directory-grid" id="vets-directory-container">
+            <!-- Dynamic vet cards -->
+          </div>
+
+          <div class="card mt-4">
+            <div class="card-header">
+              <h4 class="card-title"><i class="fa-solid fa-clipboard-list"></i> My Consultation Requests</h4>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Animal</th>
+                      <th>Veterinarian</th>
+                      <th>District</th>
+                      <th>Concern Summary</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="consultation-history-tbody">
+                    <tr><td colspan="6" class="text-center py-4 text-muted">Loading consultation history...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             TAB 6: COMMUNITY EARLY WARNING (MAIN INNOVATION)
+             =================================================================== -->
+        <section id="tab-community" class="dash-tab">
+          <div class="tab-header-row flex-between">
+            <div>
+              <h3 class="tab-title">
+                <i class="fa-solid fa-shield-virus text-warning"></i>
+                Village-Level Disease Early Warning System
+              </h3>
+              <p class="tab-subtitle">
+                Automated statistical pattern detection across anonymized community reports and camera scans to prevent localized outbreaks.
+              </p>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline" onclick="triggerClusterScan()">
+                <i class="fa-solid fa-arrows-rotate"></i> Run Pattern Detection Scan
+              </button>
+              <button class="btn btn-warning" onclick="openSimulateModal()">
+                <i class="fa-solid fa-flask"></i> Simulate Village Outbreak (Demo)
+              </button>
+            </div>
+          </div>
+
+          <div class="active-warnings-wrap mb-4" id="community-warnings-container">
+            <!-- Active cluster cards -->
+          </div>
+
+          <div class="card">
+            <div class="card-header flex-between">
+              <h4 class="card-title"><i class="fa-solid fa-chart-network"></i> Anonymized Village Health Reports Radar</h4>
+              <span class="badge badge-outline"><i class="fa-solid fa-lock"></i> Zero Personal Data Exposed</span>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Reported At</th>
+                      <th>Village</th>
+                      <th>District</th>
+                      <th>Animal Species</th>
+                      <th>Symptoms / Diseases Observed</th>
+                      <th>Severity</th>
+                      <th>Data Category</th>
+                    </tr>
+                  </thead>
+                  <tbody id="community-reports-tbody">
+                    <tr><td colspan="7" class="text-center py-4 text-muted">Loading anonymized community reports...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             TAB 7: MULTILINGUAL VOICE & TEXT ASSISTANT
+             =================================================================== -->
+        <section id="tab-assistant" class="dash-tab">
+          <div class="tab-header-row mb-2">
+            <div>
+              <h3 class="tab-title">Multilingual Livestock Healthcare Assistant</h3>
+              <p class="tab-subtitle">Speak or type your cattle and herd observations in Kannada, Hindi, or English for immediate clinical guidance.</p>
+            </div>
+          </div>
+
+          <!-- Farmer Language Selector Bar -->
+          <div class="farmer-lang-selector" id="farmer-lang-selector">
+            <span class="farmer-lang-label">
+              <i class="fa-solid fa-language"></i> Farmer Language / ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ / भाषा चुनें:
+            </span>
+            <div class="lang-pill-buttons" role="group" aria-label="Select Farmer Language">
+              <button type="button" class="lang-choice-btn active" id="btn-lang-en" data-lang="en" onclick="setFarmerLanguage('en')">
+                <span class="lang-flag">🇬🇧</span>
+                <span class="lang-name">English</span>
+                <span class="lang-sub">(Livestock AI)</span>
+              </button>
+              <button type="button" class="lang-choice-btn" id="btn-lang-hi" data-lang="hi" onclick="setFarmerLanguage('hi')">
+                <span class="lang-flag">🇮🇳</span>
+                <span class="lang-name">हिंदी (Hindi)</span>
+                <span class="lang-sub">(पशु स्वास्थ्य)</span>
+              </button>
+              <button type="button" class="lang-choice-btn" id="btn-lang-kn" data-lang="kn" onclick="setFarmerLanguage('kn')">
+                <span class="lang-flag">🌾</span>
+                <span class="lang-name">ಕನ್ನಡ (Kannada)</span>
+                <span class="lang-sub">(ಜಾನುವಾರು ಆರೋಗ್ಯ)</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Strict Domain Guardrail Banner -->
+          <div class="domain-guardrail-banner" id="domain-guardrail-banner">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div>
+              <strong>Strict Livestock Guardrails Active:</strong>
+              <span id="guardrail-desc-text">
+                VETAI is trained strictly on livestock health (cattle, buffaloes, goats, sheep), disease detection (LSD, FMD, Mastitis, Pneumonia), thermal imaging, and veterinary advice. All non-livestock queries will be politely declined.
+              </span>
+            </div>
+          </div>
+
+          <div class="assistant-chat-container card">
+            <div class="chat-messages-area" id="chat-messages-box">
+              <div class="chat-msg assistant-msg">
+                <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                <div class="msg-bubble">
+                  <p id="assistant-welcome-msg">
+                    Hello! I am your VETAI Livestock Healthcare Assistant. You can speak into the microphone or type any symptom observations (e.g. "My cow is not eating and has mild fever"). How can I support your herd today?
+                  </p>
+                  <button type="button" class="btn-voice-read" onclick="speakInitialWelcome(this)" title="Listen to message">
+                    <i class="fa-solid fa-volume-high"></i> Listen / ಆಲಿಸಿ / सुनें
+                  </button>
+                  <small class="msg-disclaimer">Guidance only • Not a substitute for a licensed veterinary examination.</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Quick Prompt Suggestion Chips -->
+            <div class="prompt-chips-bar" id="prompt-chips-bar">
+              <!-- Dynamically populated by setFarmerLanguage() in script.js -->
+            </div>
+
+            <form class="chat-input-bar" onsubmit="handleChatSubmit(event)">
+              <button type="button" id="voice-mic-btn" class="btn btn-mic" onclick="toggleVoiceRecognition()" title="Speak with microphone">
+                <i class="fa-solid fa-microphone"></i>
+              </button>
+              <input type="text" id="chat-text-input" class="form-control" placeholder="Speak or type symptoms in Kannada, Hindi, or English..." required autocomplete="off">
+              <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODALS
+       ========================================================================= -->
+
+  <!-- 1. AUTHENTICATION MODAL -->
+  <div id="auth-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header text-center">
+        <div class="modal-badge-icon"><i class="fa-solid fa-shield-cat"></i></div>
+        <h3 id="auth-modal-title" class="modal-title">Farmer Login</h3>
+        <p class="modal-subtitle">Samriddh Annadata, Samriddh Bharat</p>
+      </div>
+
+      <div class="demo-login-box">
+        <div>
+          <strong>Testing VETAI?</strong>
+          <small class="d-block text-muted">Use pre-seeded demo account with sample herd & records.</small>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-success" onclick="demoLoginAndLaunch()">
+          <i class="fa-solid fa-key"></i> Instant Demo Login
+        </button>
+      </div>
+
+      <form id="login-form" onsubmit="handleLoginSubmit(event)">
+        <div class="form-group mb-3">
+          <label class="form-label" for="login-email">Email Address <span class="text-danger">*</span></label>
+          <input type="email" id="login-email" class="form-control" placeholder="farmer@vetai.org" required value="ramesh@vetai.org">
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label" for="login-password">Password <span class="text-danger">*</span></label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required value="farmer123">
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+          <i class="fa-solid fa-arrow-right-to-bracket"></i> Login to Dashboard
+        </button>
+
+        <p class="text-center text-sm">
+          Don't have an account? <a href="#" onclick="toggleAuthMode('register'); return false;" class="text-primary font-bold">Register as a New Farmer</a>
+        </p>
+      </form>
+
+      <form id="register-form" style="display: none;" onsubmit="handleRegisterSubmit(event)">
+        <div class="form-group mb-2">
+          <label class="form-label">Full Name <span class="text-danger">*</span></label>
+          <input type="text" id="reg-name" class="form-control" placeholder="e.g. Ramesh Patel" required>
+        </div>
+
+        <div class="form-row mb-2">
+          <div class="col-6">
+            <label class="form-label">Email <span class="text-danger">*</span></label>
+            <input type="email" id="reg-email" class="form-control" placeholder="name@domain.com" required>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+            <input type="tel" id="reg-phone" class="form-control" placeholder="+91 98765 43210" required>
+          </div>
+        </div>
+
+        <div class="form-group mb-2">
+          <label class="form-label">Password <span class="text-danger">*</span></label>
+          <input type="password" id="reg-password" class="form-control" placeholder="Minimum 6 characters" required>
+        </div>
+
+        <div class="form-row mb-3">
+          <div class="col-4">
+            <label class="form-label">Village <span class="text-danger">*</span></label>
+            <input type="text" id="reg-village" class="form-control" placeholder="Shivapura" required>
+          </div>
+          <div class="col-4">
+            <label class="form-label">District <span class="text-danger">*</span></label>
+            <input type="text" id="reg-district" class="form-control" placeholder="Dharwad" required>
+          </div>
+          <div class="col-4">
+            <label class="form-label">State <span class="text-danger">*</span></label>
+            <input type="text" id="reg-state" class="form-control" placeholder="Karnataka" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+          <i class="fa-solid fa-user-plus"></i> Complete Registration
+        </button>
+
+        <p class="text-center text-sm">
+          Already registered? <a href="#" onclick="toggleAuthMode('login'); return false;" class="text-primary font-bold">Sign In here</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. ADD / EDIT ANIMAL MODAL -->
+  <div id="add-animal-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card modal-lg">
+      <button class="modal-close-btn" onclick="closeAddAnimalModal()"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-cow text-primary"></i> Register Livestock Animal</h3>
+        <p class="modal-subtitle">Enroll an individual animal into your digital farm registry.</p>
+      </div>
+
+      <form id="add-animal-form" onsubmit="submitNewAnimal(event)">
+        <div class="form-row mb-3">
+          <div class="col-6">
+            <label class="form-label">Animal Name <span class="text-danger">*</span></label>
+            <input type="text" id="modal-animal-name" class="form-control" placeholder="e.g. Gauri" required>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Unique Ear Tag ID <small class="text-muted">(Leave empty to auto-generate)</small></label>
+            <input type="text" id="modal-animal-tag" class="form-control" placeholder="e.g. IN-KA-DH-0104">
+          </div>
+        </div>
+
+        <div class="form-row mb-3">
+          <div class="col-4">
+            <label class="form-label">Animal Type <span class="text-danger">*</span></label>
+            <select id="modal-animal-type" class="form-control" required>
+              <option value="Cow">Cow</option>
+              <option value="Buffalo">Buffalo</option>
+              <option value="Goat">Goat</option>
+              <option value="Sheep">Sheep</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <label class="form-label">Breed <span class="text-danger">*</span></label>
+            <input type="text" id="modal-animal-breed" class="form-control" placeholder="e.g. Gir / Murrah / Jamnapari" required>
+          </div>
+          <div class="col-4">
+            <label class="form-label">Age <span class="text-danger">*</span></label>
+            <input type="text" id="modal-animal-age" class="form-control" placeholder="e.g. 3.5 Years" required>
+          </div>
+        </div>
+
+        <div class="form-row mb-3">
+          <div class="col-4">
+            <label class="form-label">Gender <span class="text-danger">*</span></label>
+            <select id="modal-animal-gender" class="form-control" required>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+            </select>
+          </div>
+          <div class="col-4">
+            <label class="form-label">Weight (kg) <small class="text-muted">(Optional)</small></label>
+            <input type="number" step="0.5" id="modal-animal-weight" class="form-control" placeholder="e.g. 380">
+          </div>
+          <div class="col-4">
+            <label class="form-label">Daily Milk (L) <small class="text-muted">(Optional)</small></label>
+            <input type="number" step="0.1" id="modal-animal-milk" class="form-control" placeholder="e.g. 14.5">
+          </div>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">Animal Photograph <small class="text-muted">(Optional)</small></label>
+          <input type="file" id="modal-animal-photo" accept="image/*" class="form-control" onchange="previewAnimalModalPhoto(event)">
+          <img id="modal-animal-preview" src="" alt="Animal preview" class="img-preview mt-2" style="display: none; max-height: 120px;">
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label">Additional Health Notes <small class="text-muted">(Optional)</small></label>
+          <textarea id="modal-animal-notes" class="form-control" rows="2" placeholder="e.g. Calved recently, good temperament, previous FMD booster completed."></textarea>
+        </div>
+
+        <div class="modal-footer-btns">
+          <button type="button" class="btn btn-outline" onclick="closeAddAnimalModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Register Animal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. ADD REMINDER MODAL -->
+  <div id="add-reminder-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeAddReminderModal()"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-bell text-primary"></i> Add Health Reminder</h3>
+        <p class="modal-subtitle">Set alerts for immunizations and veterinary appointments.</p>
+      </div>
+
+      <form id="add-reminder-form" onsubmit="submitNewReminder(event)">
+        <div class="form-group mb-3">
+          <label class="form-label">Select Animal (Optional)</label>
+          <select id="modal-rem-animal" class="form-control">
+            <option value="">-- All Herd / General --</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">Reminder Type <span class="text-danger">*</span></label>
+          <select id="modal-rem-type" class="form-control" required>
+            <option value="Vaccination">Vaccination (FMD / HS / BQ / Anthrax)</option>
+            <option value="Routine health check">Routine Health Check / Deworming</option>
+            <option value="Veterinary follow-up">Veterinary Follow-Up</option>
+            <option value="AI Camera Follow-up">AI Camera Follow-up</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">Reminder Title <span class="text-danger">*</span></label>
+          <input type="text" id="modal-rem-title" class="form-control" placeholder="e.g. FMD Bi-Annual Booster" required>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">Due Date <span class="text-danger">*</span></label>
+          <input type="date" id="modal-rem-date" class="form-control" required>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label">Description / Instructions</label>
+          <textarea id="modal-rem-desc" class="form-control" rows="2" placeholder="e.g. Contact Taluk dispensary for batch vaccine ampoules."></textarea>
+        </div>
+
+        <div class="modal-footer-btns">
+          <button type="button" class="btn btn-outline" onclick="closeAddReminderModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Save Reminder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. REQUEST VETERINARY CONSULTATION MODAL -->
+  <div id="vet-consult-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeConsultationModal()"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-user-doctor text-primary"></i> Request Veterinary Consultation</h3>
+        <p class="modal-subtitle">Share AI vision analysis and clinical findings with your taluk animal dispensary.</p>
+      </div>
+
+      <form id="vet-consult-form" onsubmit="submitVetConsultation(event)">
+        <div class="form-group mb-3">
+          <label class="form-label">Select Animal <span class="text-danger">*</span></label>
+          <select id="modal-consult-animal" class="form-control" required>
+            <option value="">-- Choose Animal --</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">Select Veterinarian / Clinic</label>
+          <select id="modal-consult-vet" class="form-control">
+            <option value="Dr. S. Patil (Taluk Govt Veterinary Hospital)">Dr. S. Patil (Taluk Govt Veterinary Hospital, Dharwad)</option>
+            <option value="Dr. Ramesh H. (Navalgund Mobile Clinic)">Dr. Ramesh H. (Navalgund Mobile Clinic, Dharwad)</option>
+            <option value="District Mobile Veterinary Dispensary">District Mobile Veterinary Dispensary (1962 Unit)</option>
+          </select>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">Preferred Date of Visit</label>
+          <input type="date" id="modal-consult-date" class="form-control">
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label">Description of Concern <span class="text-danger">*</span></label>
+          <textarea id="modal-consult-desc" class="form-control" rows="3" placeholder="Describe current condition and urgency..." required></textarea>
+        </div>
+
+        <div class="modal-footer-btns">
+          <button type="button" class="btn btn-outline" onclick="closeConsultationModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Transmit Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. SIMULATE VILLAGE OUTBREAK MODAL -->
+  <div id="simulate-modal" class="modal-backdrop" style="display: none;">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeSimulateModal()"><i class="fa-solid fa-xmark"></i></button>
+
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-flask text-warning"></i> Simulate Village Outbreak Pattern</h3>
+        <p class="modal-subtitle">Test how VETAI's real SQLite clustering algorithm detects spikes and generates community warnings.</p>
+      </div>
+
+      <form id="simulate-cluster-form" onsubmit="submitSimulation(event)">
+        <div class="form-group mb-3">
+          <label class="form-label">Target Village <span class="text-danger">*</span></label>
+          <input type="text" id="sim-village" class="form-control" value="Shivapura" required>
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">Target District</label>
+          <input type="text" id="sim-district" class="form-control" value="Dharwad" required>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label">Simulate Disease Symptom Cluster</label>
+          <select id="sim-pattern" class="form-control">
+            <option value="fmd">FMD-like (Mouth/Hoof Blisters, High Fever, Salivation)</option>
+            <option value="respiratory">Respiratory Complex (High Fever, Gasping, Severe Cough)</option>
+            <option value="diarrhea">Enteric Outbreak (Severe Diarrhea, Dehydration in calves/goats)</option>
+          </select>
+          <small class="text-muted mt-1 d-block">
+            Injects 4 anonymized sample reports into the village database and triggers a live pattern scan.
+          </small>
+        </div>
+
+        <div class="modal-footer-btns">
+          <button type="button" class="btn btn-outline" onclick="closeSimulateModal()">Cancel</button>
+          <button type="submit" class="btn btn-warning"><i class="fa-solid fa-play"></i> Inject Reports & Detect</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Application Script -->
+  <script src="script.js"></script>
+</body>
+</html>
