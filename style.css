@@ -2393,3 +2393,316 @@ button, input, select, textarea {
     height: 280px;
   }
 }
+
+/* ==========================================================================
+   DOCTOR PORTAL, VOICE CONCERN, NOTIFICATIONS & EHR ENHANCEMENTS
+   ========================================================================== */
+
+/* Auth Role Switcher Tabs */
+.auth-role-tabs {
+  display: flex;
+  gap: 8px;
+  background: #F1F5F9;
+  padding: 4px;
+  border-radius: 10px;
+}
+.auth-role-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.auth-role-tab.active {
+  background: #FFFFFF;
+  color: #166534;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+.auth-role-tab#tab-btn-doctor-role.active {
+  color: #1D4ED8;
+}
+
+/* Phone Input with +91 Prefix */
+.phone-input-wrap {
+  display: flex;
+  align-items: stretch;
+  position: relative;
+}
+.phone-prefix {
+  background: #E2E8F0;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #CBD5E1;
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  font-weight: 700;
+  color: #334155;
+  font-size: 1rem;
+}
+.phone-input-wrap .form-control {
+  border-radius: 0 8px 8px 0 !important;
+}
+
+/* Voice-First Concern Action Box */
+.voice-record-action-box {
+  background: #F8FAFC;
+  border: 2px dashed #93C5FD;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+.btn-voice-record {
+  background: linear-gradient(135deg, #1E40AF, #2563EB);
+  color: #FFFFFF;
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 14px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+.btn-voice-record:hover {
+  background: linear-gradient(135deg, #1D4ED8, #1D4ED8);
+  transform: translateY(-1px);
+}
+.btn-voice-record.recording {
+  background: linear-gradient(135deg, #DC2626, #B91C1C);
+  animation: pulseButton 1.5s infinite;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+}
+@keyframes pulseButton {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.voice-pulse-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 8px 14px;
+  background: #FEF2F2;
+  border-radius: 8px;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.pulsing-wave {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #DC2626;
+  animation: pulseRing 1.25s infinite;
+}
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+}
+
+/* Doctor Notification Bell & Dropdown */
+.notif-bell-wrap {
+  position: relative;
+  display: inline-block;
+}
+.notif-bell-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: #1E293B;
+  font-size: 1.15rem;
+  transition: all 0.2s ease;
+}
+.notif-bell-btn:hover {
+  background: #E2E8F0;
+}
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #DC2626;
+  color: #FFFFFF;
+  border-radius: 10px;
+  padding: 2px 7px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  border: 2px solid #FFFFFF;
+  animation: pulseRing 1.5s infinite;
+}
+.notif-dropdown-card {
+  position: absolute;
+  right: 0;
+  top: 48px;
+  width: 350px;
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.18);
+  border: 1px solid #E2E8F0;
+  z-index: 1000;
+  overflow: hidden;
+}
+.notif-header {
+  padding: 12px 16px;
+  background: #F8FAFC;
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.88rem;
+}
+.notif-list-items {
+  max-height: 320px;
+  overflow-y: auto;
+}
+.notif-item-card {
+  padding: 12px 16px;
+  border-bottom: 1px solid #F1F5F9;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.notif-item-card:hover {
+  background: #F8FAFC;
+}
+.notif-item-card.danger {
+  border-left: 4px solid #DC2626;
+  background: #FEF2F2;
+}
+.notif-item-card.unread {
+  font-weight: 600;
+}
+.notif-item-card .notif-time {
+  font-size: 0.75rem;
+  color: #64748B;
+  margin-top: 4px;
+}
+
+/* Danger badges and pulsing alert banners */
+.badge-danger {
+  background: #FEE2E2;
+  color: #991B1B;
+  border: 1px solid #F87171;
+}
+.badge-danger-pill {
+  background: #DC2626;
+  color: #FFFFFF;
+  border-radius: 9999px;
+  padding: 2px 8px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  animation: pulseRing 1.5s infinite;
+}
+.doctor-urgent-banner {
+  background: #FEF2F2;
+  border: 2px solid #F87171;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.doctor-urgent-banner.has-danger {
+  animation: dangerBorderPulse 2s infinite;
+}
+@keyframes dangerBorderPulse {
+  0% { border-color: #F87171; }
+  50% { border-color: #DC2626; box-shadow: 0 0 14px rgba(220, 38, 38, 0.2); }
+  100% { border-color: #F87171; }
+}
+
+/* Confirmed Slot Card for Farmer */
+.doctor-slot-confirmed-card {
+  background: #F0FDF4;
+  border: 2px solid #86EFAC;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.slot-confirmed-badge {
+  background: #16A34A;
+  color: #FFFFFF;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* EHR Medical Reports Grid & Cards */
+.ehr-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+}
+.ehr-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+.ehr-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+.ehr-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #F1F5F9;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+.ehr-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #64748B;
+  margin-bottom: 6px;
+}
+.ehr-prescription-box {
+  background: #F8FAFC;
+  border-left: 3px solid #2563EB;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 10px 0;
+  font-size: 0.88rem;
+  color: #1E293B;
+}

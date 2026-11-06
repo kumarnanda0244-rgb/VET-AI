@@ -92,76 +92,77 @@ http://127.0.0.1:5000
 
 ---
 
-## 5. Instant Demo Credentials
+## 5. Instant Demo Credentials & Role Access
 
-The database comes pre-seeded with a demonstration farmer and herd flock for testing all features immediately:
+### A. Farmer Access (Contact Number & Name Only)
+Farmers in rural areas have zero friction — **no password and no email required**:
+- **Farmer Name:** `Ramesh Patel` (or any custom farmer name)
+- **Contact Mobile Number:** `9876543210` (any 10-digit mobile)
+- Click **"1-Click Demo Farmer"** inside the portal access modal for instant dashboard entry.
 
-- **Email:** `ramesh@vetai.org`
-- **Password:** `farmer123`
-- **Location:** Shivapura Village, Dharwad District, Karnataka
-- **Pre-Registered Animals:**
-  1. **Gauri** (Gir Indigenous Cow, Tag: `IN-KA-DH-0101`)
-  2. **Lakshmi** (Murrah Buffalo, Tag: `IN-KA-DH-0102`)
-  3. **Nandi** (Jamnapari Goat, Tag: `IN-KA-DH-0103`)
-
-You can also click the **"Instant Demo Login"** button in the login modal for one-click access.
+### B. Doctor Clinical Portal (Senior Veterinary Surgeon)
+Veterinarians have a dedicated clinical console for emergency triage and medical records:
+- **Doctor ID / Email:** `dr.anand@vetai.org`
+- **Password:** `vet123`
+- **Doctor Name:** `Dr. Anand Kulkarni (Senior Veterinary Officer, Dharwad)`
+- Click **"1-Click Doctor Login"** inside the portal access modal to launch the Doctor Clinical Console.
 
 ---
 
 ## 6. How to Test the Main Features
 
-### A. AI Camera Livestock Disease & Welfare Detection System (Collar-Free Monitoring)
-1. Log in and navigate to **AI Camera Detection** from the sidebar or click **"Launch Live Camera Detection"** from the hero section.
+### A. Full Website Kannada Conversation & Dynamic Translation
+1. In the top navigation bar, toggle the language dropdown to **ಕನ್ನಡ (Kannada)**.
+2. The entire website dynamically translates into conversational Kannada:
+   - Landing page hero, badges, trust metrics, and action buttons
+   - AI Camera detection section, dropzones, and status indicators
+   - All 10 observable symptoms in both landing and dashboard forms (*ಜ್ವರ, ಹಸಿವಿನ ಕೊರತೆ, ಆಯಾಸ, ಹಾಲು ಕಡಿಮೆಯಾಗುವುದು, ಭೇದಿ, ಕೆಮ್ಮು, ಉಸಿರಾಟದ ತೊಂದರೆ, ಕುಂಟು, ಚರ್ಮದ ಗಂಟುಗಳು*)
+   - Multilingual livestock clinical assistant and prompt suggestion chips.
+3. Your language selection is automatically saved in browser local storage and persists across page reloads.
+
+### B. Farmer Voice-First Consultation & Emergency Danger Escalation
+1. Sign in as a farmer using Name and Mobile Number (or click **"1-Click Demo Farmer"**).
+2. Go to **Veterinary Assistance** tab and click **"Request Consultation"**.
+3. Select your animal and choose **Urgency Level: 🔴 DANGER (Immediate Hazard)**.
+4. Click the large blue microphone button: **"🎙️ ಧ್ವನಿ ರೆಕಾರ್ಡ್ ಮಾಡಲು ಇಲ್ಲಿ ಒತ್ತಿ (Tap to Speak Concern)"**.
+5. Speak your animal's symptoms into the microphone (or click any of the 4 quick preset chips like *"ನನ್ನ ಹಸುವಿಗೆ ವಿಪರೀತ ಜ್ವರ (104°F) ಮತ್ತು ಮೈಮೇಲೆ ಗಂಟುಗಳಿವೆ, ದಯವಿಟ್ಟು ತಕ್ಷಣ ಬನ್ನಿ."*).
+6. Click **"ತುರ್ತು ವಿನಂತಿ ರವಾನಿಸಿ (Transmit Request)"**.
+
+### C. Doctor Clinical Portal: Real-Time Notifications & Immediate Slot Allocation
+1. Sign out and click **Login -> Veterinary Doctor Portal** (or click **"1-Click Doctor Login"**).
+2. Observe the **Emergency Notification Bell** in the topbar pulsing red with active danger alerts.
+3. Review the **Farmer Requests & Triage Queue** (`#tab-doctor-consultations`):
+   - Critical requests are prominently flagged with pulsing **🚨 DANGER** badges.
+   - Read the farmer's name, village, and spoken voice concern.
+4. Click **"⚡ ತಕ್ಷಣ ಸ್ಲಾಟ್ ನಿಗದಿಪಡಿಸಿ (Accept & Assign Slot)"**.
+5. Select a slot time (e.g. *🚨 ತಕ್ಷಣ 30 ನಿಮಿಷದಲ್ಲಿ* or *ಇಂದು ಮಧ್ಯಾಹ್ನ 12:30 PM*) and enter first-aid instructions for the farmer.
+6. Click **"ಸ್ಲಾಟ್ ಖಚಿತಪಡಿಸಿ (Confirm & Notify Farmer)"**.
+7. Now log back in as the farmer: notice the prominent green banner confirming the doctor's visit time, instructions, and a 1-click **"📞 ವೈದ್ಯರಿಗೆ ಕರೆ ಮಾಡಿ (Call Doctor: 9448123456)"** button!
+
+### D. Doctor Maintaining Cow Medical Reports (Electronic Health Records - EHR)
+1. In the Doctor Portal, navigate to **Cow Medical EHR** (`#tab-doctor-ehr`).
+2. Click **"+ Add New Medical Report"**.
+3. Select the cattle, specify Clinical Diagnosis (e.g. *Lumpy Skin Disease Stage-1*), prescribed medicines & dosages (e.g. *Inj Meloxicam 15ml, Enrofloxacin, Povidone-Iodine spray*), vitals, and next checkup date.
+4. Click **"ವರದಿ ಉಳಿಸಿ (Save Medical Report)"**.
+5. Both the doctor and farmer can view verified cattle health records and prescriptions at any time.
+
+### E. Village Early Warning System (Designated for Doctors)
+1. In the Doctor Portal sidebar, open **ಗ್ರಾಮ ರೋಗ ಮುನ್ನೆಚ್ಚರಿಕೆ (Village Early Warning)**.
+2. Run pattern detection scans across anonymized village reports or click **"Simulate Village Outbreak (Demo)"** to inject sample clusters and verify automated community warnings.
+
+### F. AI Camera Livestock Disease & Welfare Detection System (Collar-Free Monitoring)
+1. Navigate to **AI Camera & Symptoms** tab.
 2. Select target animal (e.g. `Gauri`).
-3. Choose your input mode:
-   - **Live Camera**: Click **"Start Live Camera"** to launch the real-time viewfinder stream, aim at cattle, and click **"Capture Snapshot"**.
-   - **Upload Photo**: Click **"Upload Photo"** and select any cattle photo.
-4. Select vision spectrum:
-   - 🟢 **RGB Visual Spectrum**
-   - 🔥 **Thermal Vision** (Emulated infrared thermography for detecting localized inflammation, fever, and udder heat).
-5. Click **"Run AI Disease & Welfare Detection"**.
-6. Inspect the automated HUD parameters:
-   - **Overall Animal Welfare Index (0 - 100%)**
-   - **Body Condition Scoring (BCS 1.0 - 5.0)** with optimal herd weight indicators.
-   - **Locomotion & Lameness Score** (Posture & dorsal curvature analysis).
-   - **Respiration Rate (breaths/min) & Heat Stress Index**.
-   - **Estimated Surface Temperature (°C)** with infrared pseudocolor heatmap preview.
-   - **Detected Bovine Diseases** (e.g. Lumpy Skin Disease nodular patterns, FMD indicators, Bovine Mastitis quarter heat, Respiratory Disease / BRD).
-7. Click **"Book Veterinary Consultation for this Result"** to automatically prefill consultation notes for local dispensaries.
+3. Choose input mode: **Live Camera** (with webcam viewfinder) or **Upload Photo**.
+4. Toggle between **🟢 RGB Spectrum** and **🔥 Thermal Vision**.
+5. Select symptoms and click **"Run AI Disease & Welfare Detection"**.
+6. Inspect the explainable clinical HUD metrics: Animal Welfare Index, BCS score (1.0-5.0), lameness grade, heat stress, and detected bovine diseases.
 
-### B. Village-Level Disease Early Warning System (Main Innovation)
-1. Navigate to **Village Early Warning** from the sidebar.
-2. Observe the active **Shivapura Village High Alert Cluster** generated from real SQLite pattern clustering.
-3. Click **"Simulate Village Outbreak (Demo)"**.
-4. Select a village (e.g. `Shivapura`) and an outbreak pattern (e.g. *FMD-like* or *Respiratory*).
-5. Click **"Inject Reports & Detect"**.
-6. The system injects anonymized sample reports and triggers a live statistical pattern scan. Watch the alert banner update in real time with veterinary verification advisories!
-
-### C. Clinical Symptom Assessment & Emergency Priority Triage
-1. Navigate to **Symptom Assessment** from the sidebar.
-2. Select an animal and check observable clinical symptoms (e.g., *Fever*, *Abnormal breathing*).
-3. View the 4-tier emergency priority classification (**Green**, **Yellow**, **Orange**, **Red**). Notice how acute respiratory symptoms trigger automatic **RED** escalation.
-
-### D. Vaccination & Preventative Reminders
-1. Navigate to **Vaccine & Reminders**.
-2. View scheduled immunizations (FMD, HS, BQ) and follow-up checks.
-3. Mark completed or add new reminders for your herd.
-
-### E. Multilingual Voice & Text LLM Assistant with Strict Domain Guardrails
-1. Navigate to **Multilingual Assistant** from the sidebar or click the language bar.
-2. **Farmer Language Choices:** Select between:
-   - 🇬🇧 **English** *(Livestock AI)*
-   - 🇮🇳 **हिंदी (Hindi)** *(पशु स्वास्थ्य)*
-   - 🌾 **ಕನ್ನಡ (Kannada)** *(ಜಾನುವಾರು ಆರೋಗ್ಯ)*
-3. **Strict Domain Guardrail Policy:**
-   - The assistant is strictly trained to answer **ONLY** queries related to livestock healthcare (cattle, buffaloes, sheep, goats), bovine disease symptoms (LSD, FMD, Mastitis, Pneumonia, Bloat), non-invasive AI camera monitoring (BCS, thermal thermography), and veterinary first-aid.
-   - Any out-of-domain questions (e.g. coding, cinema, politics, sports, general recipes) are **strictly declined** with polite guidance in the farmer's selected language redirecting them back to livestock health.
-4. **Interactive Ways to Query:**
-   - **Voice Microphone (Web Speech API):** Click the microphone button and speak in Kannada (`kn-IN`), Hindi (`hi-IN`), or English (`en-IN`).
-   - **Dynamic Quick Prompts:** Click any of the language-adapted suggestion chips (e.g. *"ನನ್ನ ಹಸುವಿಗೆ 104 ಡಿಗ್ರಿ ತೀವ್ರ ಜ್ವರ ಮತ್ತು ಮೈಮೇಲೆ ಗಂಟುಗಳಿವೆ"*, *"मेरी गाय को तेज बुखार है और शरीर पर गोल गांठें दिख रही हैं"*).
-   - **Text Input:** Type observations in natural script.
-5. **Audio Read-Aloud (Text-to-Speech):**
-   - Click the **🔊 Listen / ಆಲಿಸಿ / सुनें** button on any assistant message bubble to hear the response spoken aloud in the selected language.
+### G. Multilingual Voice & Text LLM Assistant with Strict Livestock Domain Guardrails
+1. Open **Multilingual Assistant** tab.
+2. Ask cattle health questions in Kannada, Hindi, or English (e.g. *"ನನ್ನ ಹಸುವಿಗೆ ಜ್ವರ ಮತ್ತು ಮೈಮೇಲೆ ಗಂಟುಗಳಿವೆ, ಏನು ಮಾಡಬೇಕು?"*).
+3. Test the **Strict Domain Guardrail**: Ask an off-topic question (e.g. cricket, weather, politics). The AI will politely refuse and guide the user back to livestock care in their chosen language.
+4. Click **🔊 Listen / ಆಲಿಸಿ** on any message for audio playback via Text-to-Speech.
 
 ---
 
